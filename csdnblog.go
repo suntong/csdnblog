@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"regexp"
 	"sort"
 )
 
@@ -67,11 +68,12 @@ func main() {
 	sort.Sort(ByDate(blogs))
 	for i, b := range blogs {
 		_ = i
-		if i > 5 {
-			break
-		}
+		// if i > 5 {
+		// 	break
+		// }
 
 		fname := b.Title[0] + ".html"
+		fname = regexp.MustCompile("/").ReplaceAllString(fname, ",")
 		fileo, err := os.Create(resultFolder + fname) // b.Date[0][:10] + "_" +
 		check(err)
 
