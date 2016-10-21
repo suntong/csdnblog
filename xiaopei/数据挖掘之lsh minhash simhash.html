@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>数据挖掘之lsh minhash simhash</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/7977248<p>
+<address>&nbsp;&nbsp;标签：
+              数据挖掘userurlpair算法互联网
+            
+        
+        
+            2012-09-14 00:51
+            10456人阅读
+             评论(1)
+             收藏
+              举报</address><p>
+
+
+<p class="first-para" style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+在项目中碰到这样的问题：</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+互联网用户每天会访问很多的网页，假设两个用户访问过相同的网页，说明两个用户相&#20284;，相同的网页越多，用户相&#20284;度越高，这就是典型的CF中的user-based推荐算法。</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+算法的原理很简单，只要两两计算用户的相&#20284;性，针对每个用户，获取最相&#20284;的K个用户即可。</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+但是在实际的工程上，假定用户规模在亿的规模N，计算复杂度为N*N，即使是分布式，也是非常可怕的复杂度。</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+<span id="more-153" style="margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; padding-top:0px; padding-right:0px; padding-bottom:0px; padding-left:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial"></span></p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+考虑一下，我们是不是真的需要计算所有用户之间的相&#20284;性？其实我们只需要计算和用户A最相&#20284;的K个用户即可，如果已知B和A一定不相&#20284;，那么就没有必要计算，这就是LSH的思想。</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+&nbsp;</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+LSH：local sensitive hash，局部敏感哈希，关注可能相&#20284;的pair，而非所有的pair，这是lsh的基本思想。</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+&nbsp;</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+举个例子：</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+用户user1 访问过 url1,url2</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+用户user2访问过 url2,url3</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+用户user3访问过url3</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+很明显，user1和user2相&#20284;，而 user1和user3是不相&#20284;的，换句话，user1和user3是不需要比较的。</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+如何做到呢?最简单的思路，把url作为hash的key，user作为value，计算同一个key下面user的相&#20284;度。</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+url1:user1</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+url2:user1 user2</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+url3:user2 user3</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+这样分别计算user1 user2 以及user2和user3的相&#20284;性即可，不用计算user1和user3,也就是不相&#20284;的user不需要计算其相&#20284;性，基本上就是LSH的思想</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+&nbsp;</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+但是，很明显，上面的作法过于简单和粗暴：</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+1.如果每个user有上w维的特征，针对每个特征做一个hash，会导致计算复杂度大大增加，两个特征相同的用户，需要计算w次相&#20284;性</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+2.无法刻画lsh中，只关注相&#20284;的paire 中的&quot;相&#20284;”程度，比如如果相&#20284;性&lt;0.5,则认为不相&#20284;，尽量不出现在一个桶等等</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+&nbsp;</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+第一个问题谈到是降维，第二个是如何进行刻画相&#20284;性以及进行hash。</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+&nbsp;</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+&nbsp;</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+minhash以及simhash就是来解决上面的两个问题的，这两个都是来刻画jaccard距离的。</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+回到刚开始的例子，及时就是计算user1与user2的jaccard距离，假设url进行了编号，有唯一的id，最大编号为N，每个用户访问过的url数目为N(u)。</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+这样我们可以理解每个用户有N个特征，其中访问过的对应位置为1，没有访问的为0，维数很高，几十B的规模。</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+&nbsp;</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+minhash就是来解决降维的问题，具体的minhash原理网上有很多介绍，就不在详细说了。</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+minhash最后的产出是每个用户有K维的特征{id1,id2....idk}，不同用户第k特特征相同的概率和直接利用用户原始的N维特征计算jaccard距离的相&#20284;性相同, K&lt;&lt;N，达到降维的目的。</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+如果利用K维特征，计算2-2相&#20284;性，复杂度还是很高。</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+&nbsp;</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+利用LSH思想，我们只需要计算可能形&#20284;用户的相&#20284;度，保证相&#20284;的用户对应的hash&#20540;一样，而不相&#20284;的对应的hash&#20540;不同。</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+两个用户度为p，则用户对应相同位置特征&#20540;相同的概率为p，有证明。</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+将K个特征划分为band，b1,b2...bm，每个band里面的元素个数为r个，r*m=K</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+用户每个band里面r个特征全部相同的概率为p^r，也就是基于这个band作为hash&#20540;，两个用户hash&#20540;相同的概率为p^r，那么hash&#20540;不同的概率为1-s^r，m个band hash&#20540;都不一样的概率为(1-p^r)^m，也就是两个用户不在任何一个桶里面的概率。</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+而1-（1-p^r)^m 则为两个用户落在至少一个桶里面的概率，很容易理解，如果r越小，最后&#20540;越大，很不相&#20284;（p很小)的元素落在一个桶里面的概率很大，计算的复杂度高。如果r很大，则最后的&#20540;很小，也就是很相&#20284;(p比较到)落在一个桶里面的概率很小.</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+比如 r=1, m=16，p=0.2，计算后为99.8%，也就是相&#20284;性为0.2的两个元素，99.2%的概率会落在一个桶里面，进行计算，事实上是没有必要的。</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+r=20,m=1,p=0.8，计算后0.02%,也就是说相&#20284;性为0.8的两个元素，0.02%的概率是落着一个桶里面，概率很低，影响召回率。</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+这时候根据实际需要来确定r的大小，比如 r=2,m=8，</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+p=0.3时为53%概率落在一个桶</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+p=0.5时为90%概率落在一个桶</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+p=0.7时为99.6%概率裸着一个桶。</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+通过这个方法平衡计算复杂度和项目需求</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+&nbsp;</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+整体来看,minhash主要是用来降维，且为LSH提供的条件。</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+&nbsp;</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+simhash和minhash有很大的相&#20284;性，都是lsh的一个方法，但是其牛&#36924;的地方在于，simhash&#20540;之间的海明距离可以刻画其相&#20284;程度。</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+simhash本身也是用来降维以及很方便的利用LSH思想。</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+&nbsp;</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+具体的simhash的介绍很多，不做介绍。</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+假设simhash的结果是16bit的0-1串作为特征 ，假设有最多k个bit不同，我们认为其相&#20284;，那么需要将其划分成k&#43;1个band</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+比如 k=3,我们需要划分成4个band，这个比较容易理解，也有很完整的证明。</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+&nbsp;</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+整体来看，lsh是来解相&#20284;性计算的规模问题，避免计算所有pair，只计算可能相&#20284;的pair。</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+基本的思路就是划分band，band的大小和计算复杂度以及召回率有很大的关系。</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+针对基于jaccard距离的问题，直接基于在原始特征上，无法划分band，因为维度过高以及数据很稀疏，效果不好。</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+这时候，就需要将数据降维，便于高效处理。</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+minhash、simhash从不同的角度解决这个问题。</p>
+<p style="margin-top:0px; margin-bottom:1.5em; padding-top:0px; padding-bottom:0px; border-top-width:0px; border-right-width:0px; border-bottom-width:0px; border-left-width:0px; border-style:initial; border-color:initial; outline-width:0px; outline-style:initial; outline-color:initial; font-size:15px; text-align:left; line-height:22px">
+转载 请注明出处:<a href="http://blog.csdn.net/hxxiaopei/article/details/7977248">http://blog.csdn.net/hxxiaopei/</a></p>
+   
+
+</body>
+</html>

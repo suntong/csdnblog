@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>【输入法技术】模型选择</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/7318472<p>
+<address>&nbsp;&nbsp;标签：
+              输入法语言
+            
+        
+        
+            2012-03-04 18:25
+            1097人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+
+影响输入法体验的原因有很多，整体来看，我理解有两个，一个是候选词的质量，另一个是整体的交互设计。<br>
+候选词质量高，意味着用户输入拼音后，用户期望的结果可以放在第一位置，提高输入速度<br>
+如果细分一下，有3类情况：<br>
+1.输入句子(长/短)，比如，今天真是个好天气<br>
+2.输入词，比如今天/天气/我们等<br>
+3.其他情况，比如：英文、人名<br>
+<br>
+我们碰到的问题，focus在1,2上面，可以把2归在1上面，看做一个问题，通过模型来解决。<br>
+选用的模型为bigram语言模型，3元或者更高远可以作为云输入法，client-based的输入法，考虑到内存，只能做到2元。<br>
+bigram语言模型就不做介绍，n-gram模型是NLP最基础的知识，可以参照相关书籍。<br>
+模型构建的流程：<br>
+选择训练语料-&gt;分词-&gt;二元counting-&gt;smoothing-&gt;pruning-&gt;model merging-&gt;testing，最后出来的就是model，通过标音程序将model标音，构建程序能识别的词典，这样就可以准备使用。<br>
+用户输入时，所谓的二元模型，将用户输入做了拼音切分后(后面再讲)，通过解码器进行解码，最后选择分数做高的作为提供给用户。<br>
+解码器在后面介绍<br>
+<br>
+模型选择方面，没有过多的知识，只要了解n-gram、HMM相关知识就可以。
+   
+
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>如何使用# ## ... _ _VA_ARGS_ _</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/1355364<p>
+<address>&nbsp;&nbsp;标签：
+              语言c
+            
+        
+        
+            2006-10-29 11:32
+            6273人阅读
+             评论(5)
+             收藏
+              举报</address><p>
+
+<p>&nbsp;1.#<br />假如希望在字符串中包含宏参数，ANSI C允许这样作，在类函数宏的替换部分，#符号用作一个预处理运算符，它可以把语言符号转化程字符串。例如，如果x是一个宏参量，那么#x可以把参数名转化成相应的字符串。该过程称为字符串化（stringizing）.<br />#incldue &lt;stdio.h&gt;<br />#define PSQR(x) printf("the square of" #x "is %d./n",(x)*(x))<br />int main(void)<br />{<br />&nbsp;&nbsp; &nbsp;int y =4;<br />&nbsp;&nbsp; &nbsp;PSQR(y);<br />&nbsp;&nbsp; &nbsp;PSQR(2+4);<br />&nbsp;&nbsp; &nbsp;return 0;<br />}<br />输出结果：<br />the square of y is 16.<br />the square of 2+4 is 36.<br />第一次调用宏时使用&ldquo;y&rdquo;代替#x；第二次调用时用&ldquo;2+4"代#x。<br />2.##<br />##运算符可以使用类函数宏的替换部分。另外，##还可以用于类对象宏的替换部分。这个运算符把两个语言符号组合成单个语言符号。例如：<br />#define XNAME(n) x##n<br />这样宏调用：<br />XNAME(4)<br />展开后：<br />x4<br />程序：<br />#include &lt;stdio.h&gt;<br />#define XNAME(n) x##n<br />#define PXN(n) printf("x"#n" = %d/n",x##n)<br />int main(void)<br />{<br />&nbsp;&nbsp; &nbsp;int XNAME(1)=12;//int x1=12;<br />&nbsp;&nbsp; &nbsp;PXN(1);//printf("x1 = %d/n", x1);<br />&nbsp;&nbsp; &nbsp;return 0;<br />}<br />3.可变宏 ...和_ _VA_ARGS_ _<br />实现思想就是宏定义中参数列表的最后一个参数为省略号（也就是三个点）。这样预定义宏_ _VA_ARGS_ _就可以被用在替换部分中，以表示省略号代表什么。比如：<br />#define PR(...) printf(_ _VA_ARGS_ _)<br />PR("hello");--&gt;printf("hello");<br />PR("weight = %d, shipping = $.2f",wt,sp);<br />&nbsp;&nbsp; &nbsp;--&gt;printf("weight = %d, shipping = $.2f",wt,sp);<br />省略号只能代替最后面的宏参数。<br />#define W(x,...,y)错误！<br /><br />&nbsp;&nbsp; &nbsp;</p>   
+
+</body>
+</html>

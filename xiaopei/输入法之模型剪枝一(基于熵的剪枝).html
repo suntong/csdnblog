@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>输入法之模型剪枝一(基于熵的剪枝)</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/34451237<p>
+<address>&nbsp;&nbsp;标签：
+              输入法数据挖掘数据剪枝熵
+            
+        
+        
+            2014-06-25 17:15
+            1669人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">prunning，剪枝，顾名思义就是减掉那些不重要的。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">从理论上来讲，剪枝达到的效果就是剪枝后的q和剪枝前的 p 最大化相&#20284;，有两种算法 entroy-based以及rank-based。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">针对model，使用相对熵来刻画D(q||p) 来刻画，保证两个model的熵差别最小，就是entropy-based。如果使用rank(p|q)来描述，保证整个model的rank差别最小(主要是针对同一个bigram pair的left word)，就是rank-based。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">对于smoothing，我们使用的是katz平滑。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">entropy-based 计算的套路：</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">1.针对每一条数据，计算删除后的模型参数，对于katz，重新计算alpha，基于新/老alpha，看看整个model熵的变化，具体&#20540;参考论文公式。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><img src="" alt=""><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><img src="" alt=""><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><img src="http://img.blog.csdn.net/20140625171750343?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvaHh4aWFvcGVp/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""><img src="http://img.blog.csdn.net/20140625172012187?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvaHh4aWFvcGVp/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">参数计算：</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><img src="http://img.blog.csdn.net/20140625171947390?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvaHh4aWFvcGVp/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><img src="" alt=""><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">这个事情真正的难点在于，如何分布式的计算这些信息。每次删除一条数据，明显不可行，一下子删除完也不行</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">通过公式来看，这里面的重点是如何更新alpha，以及alpha确定后，如何迭代。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">rank-based算法当时也做过尝试，感觉和entropy-based差不多，并且这两个都没有达到期望的效果，所以并没有深入研究</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">上面的算法属于理论上的算法，来刻画两个模型的距离，在输入法这个应用上，并不合适。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">一般来讲，输入法原始model 的规模可能在30亿，而一个local的model需要的最多也是在1000w-2000w左右。基本上需要剪掉90%的数据，最终的model和原始model差别还是比较大的。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">基于熵的剪枝，一般意义上期望是剪掉后和原始模型差别不大，根据经验来讲，剪掉20%左右的数据就很不错了</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">所以真正意义上的剪枝应该基于输入法的特性来做</div>
+<br>
+   
+
+</body>
+</html>

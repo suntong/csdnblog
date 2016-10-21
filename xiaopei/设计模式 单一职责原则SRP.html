@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>设计模式 单一职责原则SRP</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/5902528<p>
+<address>&nbsp;&nbsp;标签：
+              设计模式class
+            
+        
+        
+            2010-09-23 23:35
+            747人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+<p><span>SRP 单一职责原则</span>
+<div><span>引起类变化的原因有且只有一个。</span></div>
+<div><span><br /></span></div>
+<div><span>变化等于类的职责，类的职责应该是单一的，类的职责过多，说明功能的耦合过强，一个功能的变化会抑制或者引发其他功能的变化，设计是脆弱的(fragile)。</span></div>
+<div><span>Eg.</span></div>
+<div><span>Rectangle类承担 计算面积/周长 以及 绘制(draw)的功能，这种设计就违反了srp原则。</span></div>
+<div><span>类Rectangle承担了两个职责，数学应用场景，使用Rectangle中面积计算的功能时，同时也需要链接gui相关的库。</span></div>
+<div><span>正确的做法应该是</span></div>
+<div><span>class ComputeRectangle<br />
+{</span></div>
+<div><span>}；</span></div>
+<div><span><br /></span></div>
+<div><span>class Rectangle</span></div>
+<div><span>{</span></div>
+<div><span>&nbsp;void draw() const；</span></div>
+<div><span>private:</span></div>
+<div><span>&nbsp;ComputeRectangle mComputeRectangle;</span></div>
+<div><span>&nbsp;GUI mGUI;</span></div>
+<div><span>}</span></div>
+<div><span><br /></span></div>
+<div><span>SRP是最简单，也是最难把握，不是说将功能划分的越细越好，关键是变化原因相同的内聚性强的功能放在一起。</span></div>
+<div><span><br /></span></div>
+</p>   
+
+</body>
+</html>

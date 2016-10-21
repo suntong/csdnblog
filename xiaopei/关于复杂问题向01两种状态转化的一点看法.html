@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>关于复杂问题向01两种状态转化的一点看法</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/1362316<p>
+<address>&nbsp;&nbsp;2006-11-02 11:26
+            706人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+昨天做了一个topcoder题目，题目大致就是对一个给定的字符串进行处理。字符串中是'R' 或者'G'。对字符串进行处理得到S,如果S不满足，则对S处理。我使用普通的做法，重新定义一个字符串T，保存对S进行处理的结果，如果T不满足，S=T重新计算。(<a href="http://blog.csdn.net/hxxiaopei/archive/2006/11/02/1362791.aspx">http://blog.csdn.net/hxxiaopei/archive/2006/11/02/1362791.aspx</a>)<br /><br />看了一下，有个大虾使用01代替R G得到一个int值 ret, 然后所有的操作就建立在对ret的&lt;&lt; &gt;&gt; |&nbsp;&nbsp;&nbsp; &amp;四种运算上面，极为方面，高效。<br /><br /><span style="FONT-WEIGHT: bold">在处理问题的时候，如果问题中只有两种状态，并且需要对操作数进行大量的变换。这可以首先考虑是否可以把问题转化成01序列，对操作数的变换是否可以转化成对01序列的操作。如果可以，会使得问题变得很容易操作。</span><br />个人的一点看法。   
+
+</body>
+</html>

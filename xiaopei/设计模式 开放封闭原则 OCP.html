@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>设计模式 开放封闭原则 OCP</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/5902809<p>
+<address>&nbsp;&nbsp;标签：
+              设计模式structiteratorclasslist扩展
+            
+        
+        
+            2010-09-24 08:51
+            536人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+<p><span>OCP开放封闭原则。</span>
+<div><span><br /></span></div>
+<div><span>开放：类/模块是可扩展的，可以增加新的行为</span></div>
+<div><span>封闭：类/模块是封闭的，代码是不可修改的。</span></div>
+<div><span><br /></span></div>
+<div><span>不好的例子：</span></div>
+<div><span>假如 有一批shape，比如 Circle Square，定义一个绘制函数，如果不是oop，则基本实现如下：</span></div>
+<div><span>struct Share</span></div>
+<div><span>{</span></div>
+<div><span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>Type shapeType;</span></div>
+<div>}</div>
+<div>struct Circle</div>
+<div>{</div>
+<div><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>Type shapeType;</div>
+<div><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>double itsRadius;</div>
+<div><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>Point point;</div>
+<div>};</div>
+<div>struct Square</div>
+<div>{</div>
+<div>Type shapeType;</div>
+<div>double side;</div>
+<div>Point itsTopleft;</div>
+<div>};</div>
+<div>typedef Shape* ShapePointer;</div>
+<div>void DrawAllShapes(ShapePointer list[], int n)</div>
+<div>{</div>
+<div>&nbsp;&nbsp; &nbsp;int i &nbsp;= 0;</div>
+<div><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>for (; i &lt; n; i++)</div>
+<div>&nbsp;&nbsp; &nbsp;{</div>
+<div><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>struct Shape*s = list[i];</div>
+<div><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>switch(s-&gt;shapeType)</div>
+<div>&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{</div>
+<div>&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; case square:</div>
+<div><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>do something;</div>
+<div>&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; case circle:</div>
+<div>&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;do something;</div>
+<div>&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }</div>
+<div>&nbsp;&nbsp; &nbsp; }</div>
+<div>}</div>
+<div>这里显然不满足OCP，当我们增加一个Shape时，必须修改这个接口，增加case。同时可能有很多基于shape的接口，比如计算面积等等，增加Shape时，需要每个地方都做修改，维护很难。同时需要编译所有使用这些接口的模块。</div>
+<div></div>
+<div>遵循OCP的设计。</div>
+<div></div>
+<div>class Shape</div>
+<div>{</div>
+<div>virtual void Draw() const = 0;</div>
+<div>};</div>
+<div>class Square : public Shape</div>
+<div>{</div>
+<div>void Draw() const;</div>
+<div>};</div>
+<div>class Circle : public Shape</div>
+<div>{</div>
+<div>void Draw() const;</div>
+<div>};</div>
+<div></div>
+<div>void DrawAllShapes(vector&lt;Shape*&gt;&amp; list)</div>
+<div>{</div>
+<div>&nbsp;&nbsp; &nbsp;vector&lt;Shapre*&gt;::iterator iter = list.begin();</div>
+<div><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>for(; iter != list.end(); ++iter)</div>
+<div>&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;(*iter)-&gt;Draw();</div>
+<div>}</div>
+<div>这样，当增加一个新的shape时，只需要从shape继承，并override，这样不改变接口(封闭)，增加新的功能(开放).</div>
+<div></div>
+<div>基本理念：抽象</div>
+<div>Strategy 模式 以及Template模式体现了这个原则。</div>
+<div></div>
+<div>当然，在设计的初期，不不可能考虑到所有的扩展。在软件的初期，可以假设系统是不会变化的；当变化发生时，要创建抽象类来隔离以后发生的同类变化。</div>
+<div>对于应用程序中每个部门肆意的抽象也不对，开发人员应该对程序出现频繁变化的哪些部分做出抽象。拒绝不成熟的抽象和抽象本身同样重要。</div>
+</p>   
+
+</body>
+</html>

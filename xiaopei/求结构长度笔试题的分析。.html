@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>求结构长度笔试题的分析。</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/1379932<p>
+<address>&nbsp;&nbsp;标签：
+              structc
+            
+        
+        
+            2006-11-12 11:15
+            840人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+<p>最近作了一些笔试题，发现有一些是求一个结构的大小。做一下总结</p>
+<p>typedef struct tBit<br />{<br />&nbsp;&nbsp;&nbsp; short m;<br />&nbsp;&nbsp;&nbsp; char a;<br />&nbsp;&nbsp;&nbsp; char n;<br />}A;&nbsp;&nbsp;&nbsp; <br />typedef struct tBit<br />{<br />&nbsp;&nbsp; <br />&nbsp;&nbsp;&nbsp; char a;<br />&nbsp;&nbsp;&nbsp; short m;<br />&nbsp;&nbsp;&nbsp; char n;<br />}B; <br />typedef struct tBit<br />{<br />&nbsp;&nbsp;&nbsp; char n;<br />&nbsp;&nbsp;&nbsp; char a;<br />&nbsp;&nbsp;&nbsp; short m;<br />&nbsp;&nbsp;&nbsp; <br />}C;</p>
+<p><strong>sizeof(A)=4 sizeof(B)=6 sizeof(C)=4，short 相对应结构的偏移量是2的倍数</strong><br />typedef struct tBit<br />{<br />&nbsp;&nbsp;&nbsp; int b;<br />&nbsp;&nbsp;&nbsp; short m;<br />&nbsp;&nbsp;&nbsp; char a;<br />&nbsp;&nbsp;&nbsp; char n;<br />&nbsp;&nbsp;&nbsp; <br />&nbsp;&nbsp;&nbsp; <br />}D;&nbsp;&nbsp;&nbsp;&nbsp; <br />&nbsp; typedef struct tBit<br />{<br />&nbsp;&nbsp;&nbsp; <br />&nbsp;&nbsp;&nbsp; short m;<br />&nbsp;&nbsp;&nbsp; int b;<br />&nbsp;&nbsp;&nbsp; char a;<br />}E;&nbsp;&nbsp;&nbsp; <br />&nbsp; typedef struct tBit<br />{<br />&nbsp;&nbsp;&nbsp; <br />&nbsp;&nbsp;&nbsp; short m;<br />&nbsp;&nbsp;&nbsp; char a;<br />&nbsp;&nbsp;&nbsp; int b;<br />}F;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </p>
+<p>sizeof(D)=8&nbsp;sizeof(E)=12 sizeof(F)=8,int&nbsp;相对于结构的偏移量为4的倍数<br />&nbsp; typedef struct tBit<br />{<br />&nbsp;&nbsp;&nbsp; <br />&nbsp;&nbsp; double m;<br />&nbsp;&nbsp;&nbsp; int b;<br />}G;&nbsp;&nbsp; &nbsp;</p>
+<p>sizeof(G)=16,double县对于结构的偏移量为8的倍数</p>
+<p><strong>可以看出，结构中一个基本类型A在分配空间时应该在相对于结构的偏移量为sizeof(A)的倍数，</strong></p>
+<p><strong>并且，结构的大小总是类型中需要空间最大元素的倍数。</strong></p>   
+
+</body>
+</html>

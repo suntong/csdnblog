@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>Markov HMM ME MEMM 整体的一些看法</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/5854656<p>
+<address>&nbsp;&nbsp;标签：
+              算法c
+            
+        
+        
+            2010-09-01 07:59
+            1500人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+<p>1.Markov假设</p>  <p>有限历史 以及 平稳。</p>  <p>有限历史指的是和有限的历史相关</p>  <p>平稳指的是 两个状态的关系和时间无关。</p>  <p>2.HMM</p>  <p>给定观察序列{O1,O2,O3...}，每个观察Oi对应隐状态序列{S1,S2....Sn}。</p>  <p>HMM解决三个问题：</p>  <p>1.计算观察序列的概率</p>  <p>利用forward算法即可</p>  <p>2.跟定观察序列，计算出对应概率最大的隐状态序列</p>  <p>Viterbi算法，提供O(N*N*T)的复杂度</p>  <p>3.给定观察序列以及状态集合，估计参数 A(状态转移矩阵) B(发射概率)</p>  <p>EM算法， forward-backword 算法</p>  <p>问题2类似序列标注的问题</p>  <p>Pr(O|S) = p(O1|S1)*p(O2|S2).....p(On|Sn)</p>  <p>P(O) = p(O1|start)*p(O2|O1).....p(On|On-1)</p>  <p>P(S|O) = argmaxPr(O|S)P(O) = argmax( ....p(Oi|Si)*p(Si|Si-1)....)</p>  <p>ME:</p>  <p>分类器，将给定的观察值O进行分类。</p>  <p>ME需要从O中提取出相关的Feature以及计算对应w。</p>  <p>注意：主要解决的是观察值O分类问题，如文本分类d那个</p>  <p>P(C=c|O)</p>  <p>MEMM:</p>  <p>序列标注问题，综合ME和HMM，提供更多的Featrue，优于HMM</p>  <p>考虑到t时间附近观察以及状态对其影响。</p>  <p>P(S|O) = argmax (P(S|O) = argmax(....p(Si| O, Si-1)....)，其中O可以是Oi，也可以是Oi-1等观察。</p>  <p>HMM与MEMM的区别：</p>  <p><a href="http://hi.csdn.net/attachment/201008/31/0_1283299121jy6b.gif"><img title="da6504ef-5716-4a64-bf84-623fde12fc09" style="border-right: 0px; border-top: 0px; display: inline; border-left: 0px; border-bottom: 0px" height="42" alt="da6504ef-5716-4a64-bf84-623fde12fc09" src="http://hi.csdn.net/attachment/201008/31/0_1283299121j2sp.gif" width="221" border="0" /></a></p>  <p><a href="http://hi.csdn.net/attachment/201008/31/0_12832991220Scc.gif"><img title="f50c769f-8e7d-41d1-a0d1-2c716edb3ccd" style="border-right: 0px; border-top: 0px; display: inline; border-left: 0px; border-bottom: 0px" height="41" alt="f50c769f-8e7d-41d1-a0d1-2c716edb3ccd" src="http://hi.csdn.net/attachment/201008/31/0_12832991225n84.gif" width="162" border="0" /></a>(MEMM)</p>  <p><a href="http://hi.csdn.net/attachment/201008/31/0_1283299122NqQf.gif"><img title="70cd2279-1a1b-425d-ba11-0d5f00756d77" style="border-right: 0px; border-top: 0px; display: inline; border-left: 0px; border-bottom: 0px" height="49" alt="70cd2279-1a1b-425d-ba11-0d5f00756d77" src="http://hi.csdn.net/attachment/201008/31/0_1283299122qtQY.gif" width="240" border="0" /></a>(MEMM)</p>  <p>从图上来看：</p>  <p><a href="http://hi.csdn.net/attachment/201008/31/0_1283299122UAG5.gif"><img title="b38c8922-a312-4ad6-95c1-140b2c987113" style="border-right: 0px; border-top: 0px; display: inline; border-left: 0px; border-bottom: 0px" height="68" alt="b38c8922-a312-4ad6-95c1-140b2c987113" src="http://hi.csdn.net/attachment/201008/31/0_12832991226b68.gif" width="244" border="0" /></a>(HMM)    <br /><a href="http://hi.csdn.net/attachment/201008/31/0_128329912274Oe.gif"><img title="54c30497-2dd2-4240-b19d-932451930747" style="border-right: 0px; border-top: 0px; display: inline; border-left: 0px; border-bottom: 0px" height="55" alt="54c30497-2dd2-4240-b19d-932451930747" src="http://hi.csdn.net/attachment/201008/31/0_1283299123D199.gif" width="244" border="0" /></a>（MEMM）</p>  <p><a href="http://hi.csdn.net/attachment/201008/31/0_1283299123028q.gif"><img title="cb0efeda-29ff-48a2-9fbe-af415267ceb1" style="border-right: 0px; border-top: 0px; display: inline; border-left: 0px; border-bottom: 0px" height="60" alt="cb0efeda-29ff-48a2-9fbe-af415267ceb1" src="http://hi.csdn.net/attachment/201008/31/0_1283299123OMtr.gif" width="244" border="0" /></a>（MEMM)</p>   
+
+</body>
+</html>

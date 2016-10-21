@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>LSH(local sensitive hash)详解</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/7988786<p>
+<address>&nbsp;&nbsp;标签：
+              pairdistancefunctionrandom优化
+            
+        
+        
+            2012-09-17 18:08
+            10514人阅读
+             评论(1)
+             收藏
+              举报</address><p>
+
+
+<p><span style="border-collapse:separate; font-family:Tahoma; border-spacing:0px"><span style="font-size:12px">LSH local sensitive hash，来自于 mining of massive datasets</span></span></p>
+<p><span style="font-family:Tahoma; font-size:12px">包括lsh的详细介绍以及针对不同距离函数的LSH。</span></p>
+<div><span style="border-collapse:separate; font-family:Tahoma; border-spacing:0px"><span style="font-size:18px"><strong>作用：</strong></span></span></div>
+<div><span style="border-collapse:separate; font-family:Tahoma; border-spacing:0px"><span style="font-size:12px">解决的问题：相&#20284;性计算，避免两两计算，提供一组Hash函数，将相&#20284;的pair放在一个bucket里面，降低计算规模。</span></span></div>
+<div><span style="border-collapse:separate; font-family:Tahoma; border-spacing:0px"><span style="font-size:18px"><strong>约束：</strong></span></span></div>
+<div><span style="border-collapse:separate; font-family:Tahoma; border-spacing:0px"><span style="font-size:12px">Hash函数的要求:</span></span></div>
+<div><span style="border-collapse:separate; font-family:Tahoma; border-spacing:0px"><span style="font-size:12px">1.相&#20284;的pair比不相&#20284;的paire更容易成为candidate</span></span></div>
+<div><span style="border-collapse:separate; font-family:Tahoma; border-spacing:0px"><span style="font-size:12px">2.识别candidate paire的效率要比从所有pair中识别candidate pair效率高(利用minhash)</span></span></div>
+<div><span style="border-collapse:separate; font-family:Tahoma; border-spacing:0px"><span style="font-size:12px">3.combinable 技术可以更好的降低false positive/negative</span></span></div>
+<div><span style="border-collapse:separate; font-family:Tahoma; border-spacing:0px"><span style="font-size:12px">4.combinable 技术识别candidate pair时间更少</span></span></div>
+<div><span style="border-collapse:separate; font-family:Tahoma; border-spacing:0px"><span style="font-size:12px">Local sensitive hash function: 是一组hash函数F， 如果f(x) = f(y)，说明x,y是candiadte pair。 如果f(x) != f(y)，x，y不是candidate pair。</span></span></div>
+<div><span style="border-collapse:separate; font-family:Tahoma; border-spacing:0px"><span style="font-size:12px">LSH函数集合将原始的特征规模降低为|F|，也就是Hash函数的个数。</span></span></div>
+<div><span style="font-size:12px">LSH需要符合如下约束，d是距离度量函数，d1 &lt; d2, p1 &gt; p2：</span></div>
+<div><span style="font-size:12px"><br>
+</span></div>
+<div><span style="font-size:12px">if d(x,y) &lt;= d1, p(f(x) = f(y)) &gt;= p1</span></div>
+<div><span style="font-size:12px">if d(x,y) &gt;= d2, p(fx) = f(y)) &lt;= p2&nbsp;</span></div>
+<div><span style="font-size:12px"><br>
+</span></div>
+<div><span style="font-size:12px">则称为(d1,d2,p1,p2)-sensitive</span></div>
+<div><span style="font-size:12px">这两个约束说明两个问题：</span></div>
+<div><span style="font-size:12px">1.如果x,y的距离小于d1, x,y成为candidate pair的概率要最小为 p1,尽量保证距离小的以大概率成为pair。</span></div>
+<div><span style="font-size:12px">2.如果x,y的距离大于d2，x,y成为candidate pair概率最大伪p2, 保证距离大的以极小的概率成为pair。</span></div>
+<div><span style="font-size:12px">这就要求，随着距离正大，成为pair的概率要降低，符合常识。</span></div>
+<div><span style="font-size:12px">我理解d1,d2的约束是为了概念更严&#26684;，因为有的时候d1&lt;d2，p1 不一定大于p2(欧氏距离)，加上d1,d2的约束，在dx ~[0,d1], dy~[d2,无穷]这两个集合里，dx &lt; dy，p1&gt;p2一定成立&nbsp;</span></div>
+<div><span style="font-size:12px"><br>
+</span></div>
+<div><strong><span style="font-size:18px">combining tech:</span></strong></div>
+<div><span style="font-size:12px">LSH提供hash function，保证candidate pair能在一起，而 combine 技术可以更好的延伸这个概念</span></div>
+<div><span style="font-size:12px">combine技术有两种： and-construct or-constrauct,其实也就是band tech.</span></div>
+<div><span style="font-size:12px">F为lsh集合， F'是针对F进行combile技术结果：</span></div>
+<div><span style="font-size:12px">and-construct：将F中r个hash 函数作为一组，保证fi(x)=fi(y), i=1,2...r，也就是r个hash&#20540;都相等才算相等，显然限制更加严&#26684; (d1,d2,p1^r, p2^r) &nbsp; p1^r &nbsp;&lt; p1，进一步降低candidate pair的个数</span></div>
+<div><span style="font-size:12px">or-construct :将F中r和hash函数作为一组，保证fi(x)=fi(y)中有一个为真则为真，i=1,2...r，限制变少(d1,d2,1-(1-p1)^r, 1-(1-p2)^r)，也就是(1-p1)^r表示都不想等的概率。</span></div>
+<div><span style="font-size:12px">两者结合起来，1-(1-p1^r)^m, &nbsp;r*m=hash函数个数</span></div>
+<div><span style="font-size:12px">之前的博文中也提到了类这样的技术，min-hash 和banding技术的集合：</span></div>
+<div><span style="font-size:12px">先利用and-construct，保证只有极其相&#20284;hash&#20540;相同概率才高，降低candidate pair的规模，然后利用 or-construct技术，保证整体上相&#20284;的pair至少在某个band里面成为candidate pair</span></div>
+<div><span style="font-size:12px"><br>
+</span></div>
+<div><span style="font-size:12px">整体来讲，LSH 就是基于距离度量函数提供一组hash函数，满足上面提到的约束，保证越相&#20284;的pair hash&#20540;相同的概率越高，能够成为candidate pair，同一hash&#20540;里面的元素少，降低整体的计算规模，同时利用and/or-construct，一方面降低计算规模，另一方面保证lsh的整体召回率，也就是相&#20284;pair至少会在某个band里面成为candidate pair。</span></div>
+<div><span style="font-size:12px"><br>
+</span></div>
+<div><strong><span style="font-size:18px">LSH for different distance measure:</span></strong></div>
+<div><span style="font-size:12px">目前的问题是针对不同的距离度量函数，提供不同local sensitive hash函数，符合上面的条件</span></div>
+<div><span style="font-size:12px"><strong>1.jaccard 距离,见&nbsp;<a href="http://blog.csdn.net/hxxiaopei/article/details/7977248">http://blog.csdn.net/hxxiaopei/article/details/7977248</a></strong></span></div>
+<div><span style="font-size:12px">jaccard的距离的LSH之前已经说过不再具体介绍，min-hash</span></div>
+<div><span style="font-size:12px"><strong>2.哈明距离</strong></span></div>
+<div><span style="font-size:12px">计算x,y里面不同bit的个数。</span></div>
+<div><span style="font-size:12px">这个也很简单，hash函数集合F中，fi(x) = xi即可。</span></div>
+<div><span style="font-size:12px">其实这个和simhash的后续处理一致</span></div>
+<div><span style="font-size:12px"><strong>3.cosin 相&#20284;性</strong></span></div>
+<div><span style="font-size:12px">jaccard/哈名距离 主要是基于特征字面&#20540;进行处理，相等或者不相等。而cosin计算的是夹角，而非计算两个向量里相同元素的个数。</span></div>
+<div><span style="font-size:12px">比如[1,2,3,4,5][10,20,30,40,50]的cosin&#20540;为1，夹角为0。</span></div>
+<div><span style="font-size:12px">假定d(x,y)表示向量x,y的相&#20284;性，对应cos中的夹角theta.</span></div>
+<div><span style="font-size:12px">LSH函数这样定义：假定x,y的特征维数为N，random的选择K个N维度向量V={v1,v2...vk}</span></div>
+<div><span style="font-size:12px">定义 d(v1,x)表示v1,x的夹角，基于V，定义LSH集合 F={f1,f2...fk}，其中 fi(x)=sign, sign= {-1,&#43;1}，如果x与vi的夹角&gt;90,sign=-1； 如果x与vi的夹角&lt;=90,则sign = -1;</span></div>
+<div><span style="font-size:12px">基于F的定义，</span></div>
+<div><span style="font-size:12px">d(x,y)=0,表示两个x，y相等，则无论V取&#20540;如何fi(x) =fi(y)的概率p = 1.</span></div>
+<div><span style="font-size:12px">d(x,y)=pi/2，表示x,y夹角为90度，则fi(x)=fi(y)的概率为1-pi/(2*pi) = 1-0.5=0.5</span></div>
+<div><span style="font-size:12px">d(x,y)=pi，表示x,y的夹角为180，则fi(x)=fi(y)的概率为0</span></div>
+<div><span style="font-size:12px">上面是三个比较特殊的夹角，针对normal的d(x,y)，则有:</span></div>
+<div><span style="font-size:12px">fi(x)=fi(y)的概率p1= 1-d(x,y)/pi，符合LSH的约束。</span></div>
+<div><span style="font-size:12px">(d1,d2,1-d1/pi, 1-d2/pi)-sensitive</span></div>
+<div><span style="font-size:12px"><br>
+</span></div>
+<div><span style="font-size:12px">每个特征点，经过LSH处理，生成K维的{-1,&#43;1}的向量，利用and-construct or-construct进一步优化即可</span></div>
+<div><span style="font-size:12px">这里需要考虑的是如何选择K特征向量V，论文提高考虑要服从高斯分布。</span></div>
+<div><span style="font-size:12px"><br>
+</span></div>
+<div><span style="font-size:12px"><strong>4.欧式距离</strong></span></div>
+<div><span style="font-size:12px">欧式距离，L2-norm，计算两个点在欧式空间的距离。这个同cosin相&#20284;性一样，不能通过字面的相等不相等来计算。</span></div>
+<div><span style="font-size:12px">比如[1,1,1]、[2,2,2] 的距离小于[1,1,1]、[10,10,10]的距离。</span></div>
+<div><span style="font-size:12px">假定d(x,y)表示向量x,y的距离，&#20540;越大，相&#20284;性越低。</span></div>
+<div><span style="font-size:12px">LSH的定义为：选择一条直线，水平或者垂直方向(针对多维数据，则取相应的直线)，对直线按照宽度为a等分，利用用户在这个维度上的&#20540;，计算应该落在那一块,针对LSH 集合F，</span></div>
+<div><span style="font-size:12px">fi(x) = (xi, a)~xi/a</span></div>
+<div><span style="font-size:12px">基于F的定义,我们将情况分成2个部分：</span></div>
+<div><span style="font-size:12px">1,x,y与直线平行：</span></div>
+<div><span style="font-size:12px">&nbsp; &nbsp; &nbsp;d(x,y)为x,y的距离，d(x,y)&lt; a，fi(x)=fi(y)的概率<strong>至少</strong>为p=(a-d(x,y))/a = 1 - d(x,y)/a：</span></div>
+<div><span style="font-size:12px">&nbsp; &nbsp; &nbsp;d=0, 则p = 1</span></div>
+<div><span style="font-size:12px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;d = a/2，则p=0.5</span></div>
+<div><span style="font-size:12px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;p= 0.1a, 则 p = 0.9</span></div>
+<div><span style="font-size:12px">&nbsp; &nbsp; &nbsp;p = a, 则p = 0</span></div>
+<div><span style="font-size:12px">2.x,y与直线有夹角theta</span></div>
+<div><span style="font-size:12px">&nbsp; &nbsp; &nbsp;如果d &gt; a时，是有可能落在同一bucket中，比如下图的y,m。</span></div>
+<div><span style="font-size:12px">&nbsp; &nbsp; &nbsp;</span></div>
+<div><span style="font-size:12px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;根据cos法则，落在水平直线上的距离为d*cos(theta)，如果距离刚好是a，可以计算出theta,则落在一个bucket的概率<strong>最多</strong>为1-theta/90，如果d*cos(theta)&lt;a，则theta变大，概率变低。随着d的变大，概率降低</span></div>
+<div><span style="font-size:12px">&nbsp; &nbsp; &nbsp;如果d=2a，则theta=60,p=1/3</span></div>
+<div><span style="font-size:12px">&nbsp; &nbsp; &nbsp;如果d=sqrt(a)，则theta=45,p=1/2</span></div>
+<div><span style="font-size:12px">&nbsp; &nbsp;&nbsp;</span></div>
+<div><span style="font-size:12px">&nbsp;则为(a/2, 2a, 1/2,1/3)-sensitive,符合d1&gt;d2, p2&lt; p1的约束。</span></div>
+<div><span style="font-size:12px">解释一下，如果距离小于a/2，至少以p=1/2的概率落在一起，如果d变小，落在一个bucket的概率曾江；如果d&gt;2a，则最多1/3的概率落在一起，如果d变大，摞在一起的概率一定降低 &nbsp; &nbsp;</span></div>
+<div><span style="font-size:12px">&nbsp;这说明一个事情，d1&lt;d2,则p1&gt;p2的成立条件是[0,d1][d2,~]，大多数情况下(jaccard,hamming,cos)，如果d1&lt;d2,则p1&gt;p2对任何d1&lt;d2关系都成立。但是在欧式距离不一定。这是因为LSH F集合导致的。</span></div>
+<div><span style="font-size:12px"><br>
+</span></div>
+<div><span style="font-size:12px">不过在实际使用中，我们定义LSH 集合F，F = {f1,f2....fk}，fi(x)为x的第i维在对应直线上的bucke id，具体a的大小&nbsp;依赖于业务，如果d一定，那么越大，落在一起的概率就越高，无论d1还是d2</span></div>
+<div><span style="font-size:12px"><br>
+</span></div>
+<div><span style="font-size:12px">如果d(x,y) &lt; d~a/2，则fi(x)=fi(y)的概率p=(a-d)/a = 0.5</span></div>
+<div><span style="font-size:12px">|</span></div>
+<div><span style="border-collapse:separate; font-family:Tahoma; border-spacing:0px"><span style="font-size:12px">|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span></div>
+<div><span style="border-collapse:separate; font-family:Tahoma; border-spacing:0px"><span style="font-size:12px"><span style="border-collapse:separate; border-spacing:0px">| &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;m</span><span style="border-collapse:separate; border-spacing:0px">.</span>&nbsp;<span style="border-collapse:separate; border-spacing:0px">&nbsp;
+ &nbsp; &nbsp; z</span><span style="border-collapse:separate; border-spacing:0px">.</span></span></span></div>
+<div>
+<div><span style="border-collapse:separate; font-family:Tahoma; border-spacing:0px"><span style="font-size:12px">|</span></span></div>
+</div>
+<div>
+<div><span style="border-collapse:separate; font-family:Tahoma; border-spacing:0px"><span style="font-size:12px">|</span></span></div>
+</div>
+<div><span style="border-collapse:separate; font-family:Tahoma; border-spacing:0px"><span style="font-size:12px"><span style="border-collapse:separate; border-spacing:0px">| &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span><span style="border-collapse:separate; border-spacing:0px">&nbsp;x.&nbsp;</span><span style="border-collapse:separate; border-spacing:0px">y</span><span style="border-collapse:separate; border-spacing:0px"><strong>.</strong></span></span></span></div>
+<div><span style="border-collapse:separate; font-family:Tahoma; border-spacing:0px"><span style="font-size:12px">|</span></span></div>
+<div>
+<div><span style="border-collapse:separate; font-family:Tahoma; border-spacing:0px"><span style="font-size:12px">|</span></span></div>
+<div><span style="border-collapse:separate; font-family:Tahoma; border-spacing:0px"><span style="font-size:12px">|</span></span></div>
+<div><span style="border-collapse:separate; font-family:Tahoma; border-spacing:0px"><span style="font-size:12px">|</span></span></div>
+<div><span style="border-collapse:separate; font-family:Tahoma; border-spacing:0px"><span style="font-size:12px">|</span></span></div>
+<div><span style="border-collapse:separate; font-family:Tahoma; border-spacing:0px"><span style="font-size:12px">|</span></span></div>
+</div>
+<div><span style="font-size:12px">|--------------|--------------|--------------|--------------|--------------|--------------|--------------|</span></div>
+<div><span style="font-size:12px"><br>
+</span></div>
+<div><span style="font-size:12px"><br>
+</span></div>
+<span style="font-size:12px"><br>
+</span><br>
+   
+
+</body>
+</html>

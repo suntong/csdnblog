@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>[topCoder-每日一二题]--[4]----动态规划的使用</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/1376146<p>
+<address>&nbsp;&nbsp;标签：
+              vectorstringiostreammath.hiteratoralgorithm
+            
+        
+        
+            2006-11-09 20:40
+            932人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+<p>几天作了一个题目，使用到了动态规划思想，避免重复计算的重要性。不避免重复计算，程序通不过测试（超时），而避免了重复计算，速度明显加快。</p>
+<p>问题描述：</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 格式如：&quot; s t p&quot;表示一个比赛开始的时间为s 结束时间为t 胜出的可能为p(0--100)现在有一个vector&lt;string&gt;co,需要求一下参加比赛能使累计p得值为最大，比如参加3场比赛，把p累计得q，即求得能得到q，求q的最大值。
+<table>
+    <tbody>
+        <tr>
+            <td>You will be given a vector &lt;string&gt; <strong>contests</strong>. Each element of <strong>contests</strong> represents a single contest and is formatted as &quot;s t p&quot; (quotes for clarity only), where s, t, and p are all integers. Each contest starts at time s and ends before time t, and John estimates that there is a p percent probability of winning that contest. Return the maximal expected number of contests that John will win if he participates in the optimal subset of non-conflicting contests. </td>
+        </tr>
+    </tbody>
+</table>
+</p>
+<p>&nbsp;解决：采用递归的做法。先按照开始时间排序，然后依次选第一个比赛，然后求出剩余比赛中能参加的最大值，显然，这是一个递归。如果按照这样做，效率很低，大量的重复计算，比如，已经求得了参加第i个比赛的最大值，在递归过程中，所有参加第i个比赛时都需要重新计算一遍。现在有一个vector&lt;int&gt;m来记录参加第i个比赛时的最大值，只需要在第一次参加时递归求出改值k,使得m[i]=k,下一次是参加时值需要从m中读取m[i]。为了避免计算量，可以从最后一个元素开始，m[len]=第len个元素的胜率，然后递减计算，第i个肯定是依赖于第i+1--end得。所以，避免了重复递归计算。最后只需要求出m中的最大值即可。</p>
+<p>程序：</p>
+<p>#include &lt;set&gt;<br />#include&nbsp; &lt;vector&gt;<br />#include &lt;string&gt;<br />#include &lt;map&gt;<br />#include &lt;iostream&gt;<br />#include &lt;iterator&gt;<br />#include &lt;algorithm&gt;<br />#include &lt;stdio.h&gt;<br />#include &lt;complex&gt;<br />#include &lt;sstream&gt;<br />#include &lt;math.h&gt;<br />#include &lt;ctype.h&gt;<br />//isalnum(), isalpha(), iscntrl(), isgraph(), isprint(), ispunct(), and isspace(),isdigit(),<br />#define cp(cot,type) copy(cot.begin(),cot.end(),ostream_iterator&lt;type&gt;(cout,&quot; &quot;));cout&lt;&lt;endl<br />#define repn(i,n) for(int i = 0; i &lt; n; i++)<br />#define repc(i,a) for(int i = 0; i &lt; a.size(); i++)<br />using namespace std;<br />class cmp<br />{<br />public:<br />&nbsp;bool operator()(string s1,string s2)<br />&nbsp;{<br />&nbsp;&nbsp;int a1,a2;<br />&nbsp;&nbsp;sscanf(s1.c_str(),&quot;%d&quot;,&amp;a1);<br />&nbsp;&nbsp;sscanf(s2.c_str(),&quot;%d&quot;,&amp;a2);<br />&nbsp;//&nbsp;cout&lt;&lt;a1&lt;&lt;&quot; &quot;&lt;&lt;a2&lt;&lt;endl;<br />&nbsp;&nbsp;return a1&lt;=a2;<br />&nbsp;}<br />};<br />class ContestSchedule<br />{<br />private:<br />&nbsp;int f(vector&lt;int&gt;&amp;s,vector&lt;int&gt;&amp;t,vector&lt;int&gt;&amp;p,int b,int lt,int max,vector&lt;int&gt;&amp;m)<br />&nbsp;{<br />&nbsp;&nbsp;if(b==t.size())<br />&nbsp;&nbsp;&nbsp;return max;<br />&nbsp;&nbsp;int tmp=0 ;<br />&nbsp;&nbsp;int tm=max;<br />&nbsp;&nbsp;for(int i = b; i &lt; s.size();i++)<br />&nbsp;&nbsp;{<br />&nbsp;&nbsp;&nbsp;if(s[i]&gt;=lt)<br />&nbsp;&nbsp;&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;if(m[i]==0)<br />&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp; <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tmp&nbsp;=f(s,t,p,i+1,t[i],0,m);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tmp+=p[i];<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m[i]=tmp;;<br />&nbsp;&nbsp;&nbsp;&nbsp;}else tmp=m[i];<br />&nbsp;&nbsp;&nbsp;if(tmp&gt;tm)<br />&nbsp;&nbsp;&nbsp;&nbsp;tm=tmp;<br />&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;}<br />&nbsp;&nbsp;return tm;<br />&nbsp;}<br />public:<br />&nbsp;double expectedWinnings(vector &lt;string&gt; contests)<br />&nbsp;{<br />&nbsp;&nbsp;int len&nbsp; = contests.size();<br />&nbsp;&nbsp;sort(contests.begin(),contests.end(),cmp());<br />&nbsp;&nbsp;vector&lt;int&gt;s(len,0);<br />&nbsp;&nbsp;vector&lt;int&gt;t(len,0);<br />&nbsp;&nbsp;vector&lt;int&gt;p(len,0);<br />&nbsp;&nbsp;vector&lt;int&gt;m(len,0);<br />&nbsp;//&nbsp;cout&lt;&lt;sizeof(int)&lt;&lt;endl;<br />&nbsp;&nbsp;for(int i = 0; i&lt;len;i++)<br />&nbsp;&nbsp;sscanf(contests[i].c_str(),&quot;%d %d %d&quot;,&amp;s[i],&amp;t[i],&amp;p[i]);<br />&nbsp;//&nbsp;cp(s,int);<br />&nbsp;&nbsp;//cp(t,int);<br />&nbsp;//&nbsp;cp(p,int);<br />&nbsp;&nbsp;int ret=0;<br />&nbsp;&nbsp;for(int i = len -1; i &gt;= 0;i--)<br />&nbsp;&nbsp;{&nbsp; ret = f(s,t,p,i,0,0,m);<br />&nbsp;&nbsp;&nbsp;m[i]=ret;<br />&nbsp;&nbsp;}<br />&nbsp;&nbsp;sort(m.begin(),m.end());<br />&nbsp;&nbsp;cp(m,int);</p>
+<p>&nbsp;&nbsp;return double(m[len-1])/100;<br />&nbsp;}<br />};</p>   
+
+</body>
+</html>

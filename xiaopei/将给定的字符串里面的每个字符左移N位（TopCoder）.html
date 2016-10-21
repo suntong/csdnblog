@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>将给定的字符串里面的每个字符左移N位（TopCoder）</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/1281905<p>
+<address>&nbsp;&nbsp;标签：
+              cryptographystringsysteminputclasseach
+            
+        
+        
+            2006-09-25 19:46
+            965人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+<p>对于给定的字符串，如&quot;ABC&quot;,如果每个字符左移N=1位，则为&quot;ZAB&quot;，在TopCoder上作的，时间不长，感觉自己的方法已经很简练了，但是只有160分（满250）,郁闷~给个更好的解法~</p>
+<p>
+<table>
+    <tbody>
+        <tr>
+            <td colspan="2">
+            <h3>Problem Statement </h3>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp; </td>
+            <td>
+            <p>Julius Caesar used a system of cryptography, now known as Caesar Cipher, which shifted each letter 2 places further through the alphabet (e.g. 'A' shifts to 'C', 'R' shifts to 'T', etc.). At the end of the alphabet we wrap around, that is 'Y' shifts to 'A'. </p>
+            <p>We can, of course, try shifting by any number. Given an encoded text and a number of places to shift, decode it. </p>
+            <p>For example, &quot;TOPCODER&quot; shifted by 2 places will be encoded as &quot;VQREQFGT&quot;. In other words, if given (quotes for clarity) &quot;VQREQFGT&quot; and 2 as input, you will return &quot;TOPCODER&quot;. See example 0 below. </p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</p>
+<p>代码：</p>
+<p>#include &lt;string&gt;<br />using namespace std;<br />class CCipher<br />{public:<br />&nbsp;string decode(string cipherText, int shift)<br />&nbsp;{<br />&nbsp;&nbsp;string ret = &quot;&quot;;<br />&nbsp;&nbsp;int len = cipherText.size();<br />&nbsp;&nbsp;for(int i=0; i&lt;len; i++)<br />&nbsp;&nbsp;{<br />&nbsp;&nbsp;&nbsp;char tmp='Z'-cipherText[i]+shift;<br />&nbsp;&nbsp;&nbsp;tmp=tmp%26;//移位后于Z的距离~<br />&nbsp;&nbsp;&nbsp;ret+=('Z'-tmp);//计算出对应的字符<br />&nbsp;&nbsp;}<br />&nbsp;&nbsp;return ret;&nbsp;&nbsp;&nbsp;<br />&nbsp;}<br />};&nbsp;</p>
+<p>同样可以计算出右移，只需要将char tmp=cipherText[i]-'A'+shift&nbsp; ret+=('A'+tmp)就可以了~</p>
+<p>看了一个别人的代码：</p>
+<p>ret+=cipherText[i]-shift&lt;'A'?(cipherText[i]+'Z'-'A'+1-shift):(cipherText[i]-shift)确实简单~<br /></p>   
+
+</body>
+</html>

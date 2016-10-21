@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>一沓扑克牌中剔除等于13或者相邻之和等于13的扑克牌，剩余多少</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/1277162<p>
+<address>&nbsp;&nbsp;标签：
+              stringiteratorcharacterclassalgorithmvector
+            
+        
+        
+            2006-09-25 12:08
+            1003人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+<p>一沓扑克牌中剔除等于13或者相邻之和等于13的扑克牌，如果最后一个和第一个之和为13，同样剔除</p>
+<p>最后剩余的扑克牌数目</p>
+<p>Tommy is learning a simple card game called Circle. To play the game, the single player shuffles a deck of cards. He or she then flips through the deck, removing all instances of the 'K' card, and all consecutive pairs of cards that add up to 13. The deck does wrap around, so that if the last card remaining in the deck and the first card remaining in the deck add up to 13, they are both removed. The player keeps cycling through the deck until no more cards can be removed.</p>
+<p>Create a class CircleGame containing the method cardsLeft that takes a string <strong>deck</strong> representing a not-necessarily complete nor correct deck of cards. Each character of <strong>deck</strong> represents the value of a card without the suit. The values shown on the card represent the following numerical values:</p>
+<pre>'A' - 1
+'2' - 2
+'3' - 3
+'4' - 4
+'5' - 5
+'6' - 6
+'7' - 7
+'8' - 8
+'9' - 9
+'T' - 10
+'J' - 11
+'Q' - 12
+'K' - 13&nbsp;</pre>
+<pre><div>#include &lt;algorithm&gt;<br />#include &lt;vector&gt;<br />#include &lt;iterator&gt;<br />using namespace std;<br />#define N 10<br />class bp<br />{<br />public:<br />&nbsp;bool operator()(int a,int b)<br />&nbsp;{<br />&nbsp;&nbsp;return (a+b==13);<br />&nbsp;}<br />};<br />class CircleGame<br />{<br />private:<br />&nbsp;vector&lt;int&gt; change(string deck)<br />&nbsp;{<br />&nbsp;&nbsp;int len =deck.size();<br />&nbsp;&nbsp;int val;<br />&nbsp;&nbsp;vector&lt;int&gt; v(len);<br />&nbsp;&nbsp;for(int i=0 ; i &lt; len ;i++)<br />&nbsp;&nbsp;{<br />&nbsp;&nbsp;&nbsp;if(deck[i]=='A')<br />&nbsp;&nbsp;&nbsp;&nbsp;val=1;<br />&nbsp;&nbsp;&nbsp;else if(deck[i]=='T')<br />&nbsp;&nbsp;&nbsp;&nbsp;val=10;<br />&nbsp;&nbsp;&nbsp;else if(deck[i]=='J')<br />&nbsp;&nbsp;&nbsp;&nbsp;val=11;<br />&nbsp;&nbsp;&nbsp;else if(deck[i]=='Q')<br />&nbsp;&nbsp;&nbsp;&nbsp;val=12;<br />&nbsp;&nbsp;&nbsp;else if(deck[i]=='K')<br />&nbsp;&nbsp;&nbsp;&nbsp;val=13;<br />&nbsp;&nbsp;&nbsp;else<br />&nbsp;&nbsp;&nbsp;&nbsp;val=deck[i]-'0';<br />&nbsp;&nbsp;&nbsp;v[i]=val;<br />&nbsp;&nbsp;}<br />&nbsp;&nbsp;return v;<br />&nbsp;}<br />&nbsp;int gnext(int i, vector&lt;bool&gt; status)<br />&nbsp;{<br />&nbsp;&nbsp;int len =status.size();<br />&nbsp;&nbsp;int k = (i+1)%len;<br />&nbsp;&nbsp;while(!status[k])<br />&nbsp;&nbsp;{<br />&nbsp;&nbsp;&nbsp;k=(k+1)%len;<br />&nbsp;&nbsp;&nbsp;if(k==i)<br />&nbsp;&nbsp;&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;k=-1;<br />&nbsp;&nbsp;&nbsp;&nbsp;break;<br />&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;}<br />&nbsp;&nbsp;return k;<br />&nbsp;&nbsp;&nbsp;</div><div>&nbsp;}<br />public:<br />&nbsp;int cardsLeft(string deck)<br />&nbsp;{<br />&nbsp;&nbsp;vector&lt;int&gt; deckVal =change(deck);<br />&nbsp;&nbsp;int len=deckVal.size();<br />&nbsp;&nbsp;//copy(deck.begin(),deck.end(),ostream_iterator&lt;char&gt;(cout,&quot; &quot;));<br />&nbsp;&nbsp;<br />&nbsp;&nbsp;//cout&lt;&lt;&quot; &quot;&lt;&lt;deck.size()&lt;&lt;endl;<br />&nbsp;&nbsp;//copy(deckVal.begin(),deckVal.end(),ostream_iterator&lt;int&gt;(cout,&quot; &quot;));<br />&nbsp;&nbsp;//cout&lt;&lt;&quot; &quot;&lt;&lt;deckVal.size()&lt;&lt;endl;<br />&nbsp;&nbsp;vector&lt;bool&gt; status(len,true);<br />&nbsp;&nbsp;bool cur=false;<br />&nbsp;&nbsp;int i=0;<br />&nbsp;&nbsp;while(1)<br />&nbsp;&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;i=gnext(i,status);<br />&nbsp;&nbsp;&nbsp;&nbsp;if(i==-1)<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return len;<br />&nbsp;&nbsp;&nbsp;if(deckVal[i]==13)<br />&nbsp;&nbsp;&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;len--;<br />&nbsp;&nbsp;&nbsp;&nbsp;status[i]=false;<br />&nbsp;&nbsp;&nbsp;&nbsp;cur=true;</div><div>&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;else<br />&nbsp;&nbsp;&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;int k = gnext(i,status);<br />&nbsp;&nbsp;&nbsp;&nbsp;if(k==-1)<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return len;<br />&nbsp;&nbsp;&nbsp;&nbsp;else if(k &lt; i)<br />&nbsp;&nbsp;&nbsp;&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if((deckVal[i]+deckVal[k])==13)<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;len=len-2;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cur=true;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;status[i]=false;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;status[k]=false;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}else<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(cur)<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cur=false;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return len;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;}else<br />&nbsp;&nbsp;&nbsp;&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if((deckVal[i]+deckVal[k])==13)<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;len=len-2;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cur=true;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;status[i]=false;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;status[k]=false;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;}//else<br />&nbsp;&nbsp;}</div><div>&nbsp;}<br />};</div></pre>
+<pre>&nbsp;</pre>   
+
+</body>
+</html>

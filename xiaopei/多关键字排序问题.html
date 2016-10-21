@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>多关键字排序问题</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/1362822<p>
+<address>&nbsp;&nbsp;标签：
+              pairclass
+            
+        
+        
+            2006-11-02 15:14
+            1310人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+<p>对含有多个关键字的结构进行排序，比如　vector&lt;pair&lt;int,int&gt; &gt;，　对于pair中的first按照递增排序，对于first相同的按照second递增排序</p>
+<p>class cmp<br />{<br />&nbsp;public:<br />&nbsp;&nbsp;bool operator()(pair&lt;int,int&gt;p1,pair&lt;int,int&gt;p2)<br />&nbsp;&nbsp;{<br />&nbsp;&nbsp;&nbsp;return (p1.first == p2.first)?p1.second&lt;p2.second:p1.first&lt;p2.first;<br />&nbsp;&nbsp;}<br />};</p>
+<p>然后调用ｓｏｒｔ函数就可以了&nbsp;</p>   
+
+</body>
+</html>

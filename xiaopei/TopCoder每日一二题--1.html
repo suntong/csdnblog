@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>TopCoder每日一二题--1</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/1354041<p>
+<address>&nbsp;&nbsp;标签：
+              classc
+            
+        
+        
+            2006-10-28 08:46
+            618人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+<p>问题：</p>
+<p>一个pan里面最多能放m个饼，饼的每面需要烤5分钟（两面可以有时间间隔）。现在有n个饼，最短需要多长时间？</p>
+<p>分析&nbsp;：</p>
+<p>m=2, n=3（a b c）,需要15分钟 ，把两个饼a,b放到pan里，5分钟后取出一个(比如a)，把c放进去，然后把b翻过来，5分钟后a OK,把b放进来，c翻过来，5分钟后 b c OK</p>
+<p>程序：</p>
+<p>using namespace std;<br />class FryingHamburgers<br />{<br />&nbsp;public:<br />&nbsp;<br />&nbsp;int howLong(int panSize, int hamburgers)<br />&nbsp;{</p>
+<p>&nbsp;&nbsp;return (hamburgers==0)?0:( (hamburgers &lt;= panSize)?10:((2*(hamburgers/panSize)+1)*5 ));<br />&nbsp;}<br />};</p>
+&nbsp;   
+
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>新闻个性化推荐基本算法</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/47007011<p>
+<address>&nbsp;&nbsp;标签：
+              ldatopic model个性化推荐
+            
+        
+        
+            2015-07-22 17:40
+            6029人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+
+<div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">针对新闻的个性化推荐，一般情况下不做item-based，这种计算的计算的复杂度太高，资讯的产生以及用户的点击，属于高频度发生的，涉及的推荐数据集合，都是新产生的，item-based的难度有点大。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">从资讯浏览习惯来讲，新闻的个性化，最最重要的东西，就是用户的兴趣挖掘，用户的兴趣来自于用户的行为，</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">集中在“领域”上，娱乐，时事，健康，育儿等大类，或者“国内娱乐”，“宝宝故事”等细粒度类，或者“赵薇”“黄晓明”“大胸”等keyword层面。新闻的个性化主要就是从行为中抽取用户兴趣，然后基于兴趣推荐数据</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">
+<div><br>
+<span style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">整体来看 1.keyword&#43;大类 2.topic model 3.user-based</span></div>
+<br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">分层几个步骤来解决：</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">预先需要有的东西：</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">1.topic定义，一般是指关键词定义，不是所有的词都可以做成用户兴趣,尤其是需要作为推荐理由的情况下，需要保证keyword的有效性，最好建立起来keyword，category的映射关系</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">2.对用户行为进行过滤，保留有价&#20540;的行为，用户大约80%的行为无关的，贴吧，qzone，登陆页等，抽取不出来兴趣</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">基于用户浏览的网页：</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">1.从title landing page中抽取 预定义的topic，然后将所有的topic merge起来，这里面最大的问题容易跑偏，比如“雅典奥运会闭幕式，北京八分钟”，其实就是核心是“奥运会”，但是keyword容易把伦敦也抽取出来，所以我们可以将大类引入，为每篇文档分大类，比如上case，分成“体育”后，伦敦不属于体育范畴的词，就可以过滤掉。合并后，取高频keyword或者基于tf-idf思路，截取用户兴趣即可。这个参照google
+ news那篇文章，就是这么做的，不过它更多考虑的是大类，真正的个性化应该有更细粒度的</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">这种方法的最大缺点是 topic的定义比较难，人工参与的成分比较重，且粒度比较细，没法绝对刻画用户兴趣，导致每个keyword上的概率分布比较均匀，没有绝对兴趣</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">2.解决#1的问题，类&#20284;“svm&quot;&quot;lr&quot;这些词，其实表明用户对“分类算法”感兴趣，如果我们能够在keyword和大类（机器学习），将用户的兴趣收敛到机器学习上，这样出现“最大熵”等文章，也可以推荐给用户，这样能够更好地刻画用户兴趣。 但是中间层需要人工或者半人工来搞。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">3.解决#1#2中的人工问题，可以用LDA等TOPIC model来解决，基于已有数据训练model，知道pdz以及pzw，基于这些word的topic分布，计算出来用户的topic分布，然后将这些topic下面的频率比较高的keyword取出来，补充到用户兴趣中，理想意义上，svm 最大熵 应该在“分类算法”或者“机器学习”这样的topic下面，先天解决掉这个问题，又不需要人工定义中间层的topic。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">4.#3中解决了人工定义中间类的问题，但是给用户推荐的时候，是否一定需要keyword来获取数据呢？既然已经计算出来用户的topic分布，直接将用户兴趣定位到topic model中的topic上，通过pdz,可以计算出来topic下面的doc分布，这样给用户推送topic下面最新的数据即可。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">5.再思考下，是不是一定需要先操作#1，基于预定义keyword，抽取用户兴趣？其实也不需要，基于用户的浏览行为，计算每篇文档的topic分布，直接可以计算出用户的兴趣，按照topic推荐即可。 定义keyword最大的好处，是给出一些推荐理由，告诉用户为什么告你，或者基于那个topic给推荐的。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">个人建议，实际操作中，可以将#3 #5结合起来，#3的好处是可控，推荐数据可描述，#5比较避免keyword的约束，可以完全靠算法来操作。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">此外，topicmodel中的数据也需要进行去噪，去掉那些没有区分度的topic</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">协同过滤 Mid-based:这个很容易理解，发现相同兴趣的用户，基于其他用户的行为推荐数据。这个的好处在于可以基于点击数据，快速做推荐。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">除了上面，再考虑长期兴趣，短期兴趣，实时反馈信息等</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<br>
+</div>
+   
+
+</body>
+</html>

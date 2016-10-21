@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>相似性度量</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/5602610<p>
+<address>&nbsp;&nbsp;2010-05-18 08:32
+            658人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+<p>二元向量的相似性度量(每一维都少的信息量，主要是0,1等有 or 没有属性)：</p>
+<p>Dice：2*|(X&cap;Y)|/(|X|+|Y|), *2保证&isin;[0,1],维数不一致时，差别大。</p>
+<p>jaccard |(X&cap;Y)/(X&cup;Y)|,交叠程度小时，值较低</p>
+<p>交叠系数：|(X&cap;Y)|/min{|X|,|Y}}， 互相之间的包含性，=1</p>
+<p>cosine： |X&cap;Y|/根号(|X|*|Y|)</p>
+<p>&nbsp;</p>
+<p>对于实值：</p>
+<p>只有cosine</p>
+<p>欧式空间对向量长度的定义</p>
+<p>两个向量的点积</p>
+<p>欧式距离</p>
+<p>归一化系数</p>
+<p>&nbsp;</p>
+<p>概率度量方法，不同概率分布之间(不)相似度量方法：</p>
+<p>&nbsp;</p>
+<p>KL 相对熵: D(p||q)，采用p分布代替q分布时，多少信息丢失 q=0，穷大问题，不对称</p>
+<p>iRad: D(p||p+q/2) + D(q||p+q/2)，对称</p>
+<p>L1 norm:&sum;|p-q|</p>   
+
+</body>
+</html>

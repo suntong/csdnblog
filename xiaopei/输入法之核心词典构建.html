@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>输入法之核心词典构建</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/29834821<p>
+<address>&nbsp;&nbsp;标签：
+              输入法词典NLP产品
+            
+        
+        
+            2014-06-10 14:26
+            1720人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+
+<br>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">拼音输入法输出的候选分成两个部分，系统词以及短句(智能组词),智能组词是通过model以及解码弄出来的，后续再说。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">系统词就是那些常用的词(词组)收录到词典中，用户的输入和词典中的词match时，直接吐出来，而不需要解码获得。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">系统词以及对应的rank(score)对输入法的体验很大，毕竟大多数用户还是继续短词输入。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">系统词包含几个部分：</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">1.基础词</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">2.高频短串</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">3.细胞词库</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">其中基础词的比较复杂，也没有统一的方法。一般的做法是：</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">1.对训练语料进行分词，然后取top 20-50w的词作为基础词，如果有知识库等分类的词典，可以按照类别，比如电商等可以引入一些词</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">2.获取第三方的核心词典，将大家都有的，或者基于一定的规范，选择出来，作为核心词典。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">这个很重要，但是基本上高频的都能被cover住，而中低频的就看产品需求了。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">针对高频短串，比如“去哪里”等等，没有必要通过智能组词来解决，智能组词毕竟是有错误率的。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">同时，加到核心词库里面后，在展现上比较方便控制。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">毕竟智能组词一版智能选一个最好的，而系统词可以有多个，“去哪里”去那里“</div>
+   
+
+</body>
+</html>

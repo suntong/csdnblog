@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>整型和字符串的转化</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/1271432<p>
+<address>&nbsp;&nbsp;标签：
+              string
+            
+        
+        
+            2006-09-24 15:03
+            883人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+<p>一。整型到字符串</p>
+<p>&nbsp;给定的一个整型数,如何转化成字符串?<br /><br />1. int i=255;<br />&nbsp;&nbsp; char a[N];<br />&nbsp;&nbsp; sprintf(a,&quot;%d&quot;,i);<br />&nbsp; ok<br />2.</p>
+<p>&nbsp;string&nbsp; str= itos(i);<br />&nbsp; string itoa(int i)<br />&nbsp;{<br />&nbsp;&nbsp; string tmp=&quot;&quot;;<br />&nbsp;&nbsp; do<br />&nbsp; {<br />&nbsp;&nbsp;&nbsp; char ch = i%10 + '0';<br />&nbsp;&nbsp;&nbsp; tmp.insert(0,&amp;ch);<br />&nbsp;&nbsp; }while( (i=i/10)!=0 )</p>
+<p>return tmp;<br />&nbsp; }<br />&nbsp;ok<br />&nbsp;当然把最前面的0值滤掉&nbsp;</p>
+<p>二。字符串到整型</p>
+<p>库函数 atoi atof atol</p>
+<p>如果有一定的格式如：&quot;10:28:25&quot;，把对应的时间对出来，h,m,s。</p>
+<p>string str=&quot;10:28:25&quot;;</p>
+<p>sscanf(&quot;str.c_str(),&quot;%d:%d:%d&quot;,&amp;h,&amp;m,&amp;s);</p>
+<p>欢迎补充&nbsp;</p>   
+
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>order statistics(找最ith小数值)问题</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/1419784<p>
+<address>&nbsp;&nbsp;标签：
+              statistics算法
+            
+        
+        
+            2006-11-29 12:29
+            995人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+<p>order statistics就是在一堆无序的序列中查找第n小元素。</p>
+<p>分为2种：</p>
+<p>1.静态，也就是序列给定，并且不再变化，此时采取类似快排的做法，需要改变判断条件和结束条件。</p>
+<p>2动态，就是元素在不断的增加和减少，在此过程中需要查找第nth元素，此时需要使用RBTree来实现，在data区加上一个value，表示以此为根的子树种节点个数(<a href="http://blog.csdn.net/hxxiaopei/archive/2006/11/25/1413993.aspx">http://blog.csdn.net/hxxiaopei/archive/2006/11/25/1413993.aspx</a>)</p>
+<p>具体的过程参看算法导论</p>   
+
+</body>
+</html>

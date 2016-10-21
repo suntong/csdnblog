@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>似然比</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/5695438<p>
+<address>&nbsp;&nbsp;标签：
+              c
+            
+        
+        
+            2010-06-26 09:52
+            458人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+<p>假设1: P(y|x) = p = p(y|!x)</p>
+<p>假设2：P(y|x) = p1 != p2 = p(y|!x)</p>
+<p>其中1表示二者独立，2表示不独立。</p>
+<p>&nbsp;</p>
+<p>似然比主要是用来描述二者的依赖程度，也就是假设2的程度</p>
+<p>假设是二项分布</p>
+<p>&nbsp;</p>
+<p>cx, cy, cxy表示出现次数，N表示总次数，估计p p1 p2。</p>
+<p>&nbsp;</p>
+<p>对已H1(假设1):</p>
+<p>p(y|x)&nbsp; = cy/N</p>
+<p>p(y|!x) = cy/N</p>
+<p>条件cx下cxy的二元组xy b(cxy, cx, p)</p>
+<p>条件N - cx下cy - cxy的二元组!x y: b(cx - cxy, N - cx, p)</p>
+<p>&nbsp;</p>
+<p>对已H2(假设1):</p>
+<p>p(y|!x) = c(y, !x)/c(!x) = (cy - cxy)/(N - cx)</p>
+<p>p(y|x)&nbsp; = cxy/cx</p>
+<p>p(y|!x) = (cy - cxy)/(N - cx)</p>
+<p>条件cx下cxy的二元组xy b(cxy； cx, p1)， cxy为随机变量</p>
+<p>条件N - cx下cy - cxy的二元组!x y: b(cx - cxy；N - cx, p2) cx-cxy为随机变量</p>
+<p>&nbsp;</p>
+<p>L(H1) = b(cxy; cx, p)*b(cy - cxy; N -cx, p)</p>
+<p>L(H2) = b(cxy; cx, p1) *b(cy - cxy; N - cx, p2)</p>
+<p>表示什么含义?</p>
+<p>似然比:</p>
+<p>logr = Log(L(H1)/L(H2))</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>如果这个值很大，说明二者是依赖的的</p>   
+
+</body>
+</html>

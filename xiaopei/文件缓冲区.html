@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>文件缓冲区</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/2622667<p>
+<address>&nbsp;&nbsp;标签：
+              stringdeletefileiosio
+            
+        
+        
+            2008-07-07 19:09
+            837人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+<p>最近处理数据，经常需要读一行数据，处理，写入文件，采用fprintf函数效率很低，好的做法就是先把数据写入缓冲区，然后缓冲区满后再写入文件，这样减少IO操作。下面吧这个功能封装，构造函数需要写入输出文件路径已经缓冲区大小，然后writeToFile函数实现将字符串写入文件，最后用close来关键文件以及清空缓冲区&nbsp;</p>
+<p>#ifndef FILEBUFF_H
+#define FILEBUFF_H
+#include &lt;fstream&gt;
+#include &lt;cstring&gt;
+#include &lt;string&gt;
+using namespace std;</p>
+<p>class FileBuff
+{
+&nbsp;public:
+&nbsp;&nbsp;FileBuff(const string&amp; out_file, int buff_size):/
+&nbsp;&nbsp;&nbsp;m_flag(0),m_BUFFSIZE(buff_size)
+&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;m_buff = new char[m_BUFFSIZE];
+&nbsp;&nbsp;&nbsp;m_of.open(out_file.c_str(), ios::out); 
+&nbsp;&nbsp;&nbsp;if(!m_of)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;cerr&lt;&lt;&quot;Failed to open file&quot;&lt;&lt;endl;
+&nbsp;&nbsp;&nbsp;&nbsp;exit(-1);
+&nbsp;&nbsp;&nbsp;}</p>
+<p>&nbsp;&nbsp;}
+&nbsp;&nbsp;int WriteToFile(const string &amp;str)
+&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;int len = str.size();
+&nbsp;&nbsp;&nbsp;if(len &gt;= m_BUFFSIZE)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m_of&lt;&lt;str;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return 1;
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;int remain = m_BUFFSIZE - m_flag - 1;//one for /0
+&nbsp;&nbsp;&nbsp;if(len &gt; remain)
+&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;m_of&lt;&lt;m_buff;
+&nbsp;&nbsp;&nbsp;&nbsp;m_flag = 0;
+&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;strcpy( m_buff + m_flag,str.c_str());
+&nbsp;&nbsp;&nbsp;m_flag += len;
+&nbsp;&nbsp;&nbsp;m_buff[m_flag] = '/0';</p>
+<p>&nbsp;&nbsp;}
+&nbsp;&nbsp;int close()
+&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;m_of&lt;&lt;m_buff;
+&nbsp;&nbsp;&nbsp;m_of.close();
+&nbsp;&nbsp;&nbsp;delete[] m_buff;
+&nbsp;&nbsp;}
+&nbsp;&nbsp;~FileBuff()
+&nbsp;&nbsp;{
+&nbsp;&nbsp;}
+&nbsp;private:
+&nbsp;&nbsp;int m_flag;//the first pos can be used
+&nbsp;&nbsp;char *m_buff;
+&nbsp;&nbsp;fstream m_of;
+&nbsp;&nbsp;int m_BUFFSIZE;
+};
+#endif
+</p>   
+
+</body>
+</html>

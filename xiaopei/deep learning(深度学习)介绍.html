@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>deep learning(深度学习)介绍</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/18226043<p>
+<address>&nbsp;&nbsp;2014-01-13 17:17
+            3058人阅读
+             评论(1)
+             收藏
+              举报</address><p>
+
+
+<div>
+<div style="font-family:Tahoma; orphans:2; widows:2"><span style="font-size:18px">最近接触deep learning，看了一些论文，理论细节比如RBM等，还需要研究，先通过比较通俗的语言组织下。</span></div>
+<div style="font-family:Tahoma; orphans:2; widows:2"><span style="font-size:18px"><br>
+</span></div>
+<span style="font-family:Tahoma; orphans:2; widows:2"><span style="font-size:18px">deep learning 并非一种具体的机器学习model，而是一个框架，或者思路。dp用于特征学习，或者特征表示。</span></span>
+<div style="font-family:Tahoma; orphans:2; widows:2"><span style="font-size:18px">接触到的svn lg 等机器学习算法，都会有特征提取以及特征选择，这两个决定了模型的质量，靠谱的特征越多，模型的表达能力越强，但是特征抽取受限于使用模型的人以及刻画特征的能力。无论是文本分类，还是图片以图识图等，人能够理解图片/文本，很方便的进行分类等，但是无法提取出让计算机也能够明白特征，无法把自己的理解复制到计算机上面，这就是dp要解决的问题(当然不是万能的)：特征表示，从样本中，从样本数据中提取出来最能够表示样本的特征，最理想的是人理解意义上的特征。</span></div>
+<div style="font-family:Tahoma; orphans:2; widows:2"><span style="font-size:18px"><br>
+</span></div>
+<div style="font-family:Tahoma; orphans:2; widows:2"><span style="font-size:18px">和BP的区别：</span></div>
+<div style="font-family:Tahoma; orphans:2; widows:2"><span style="font-size:18px">BP神经网络也是干了这个事情，但是BP有大问题：</span></div>
+<div style="font-family:Tahoma; orphans:2; widows:2"><span style="font-size:18px">1.需要标注数据，这就制约训练，大多数数据是没有label的</span></div>
+<div style="font-family:Tahoma; orphans:2; widows:2"><span style="font-size:18px">2.训练时间长，多个隐层更为明显，我理解是bp是通过误差逆传播的方法来更新参数，层数多时，从输出到多个隐层，损失过大</span></div>
+<div style="font-family:Tahoma; orphans:2; widows:2"><span style="font-size:18px">3.过拟合/局部最优，这个貌&#20284;很多模型都有可能，不管</span></div>
+<div style="font-family:Tahoma; orphans:2; widows:2"><span style="font-size:18px"><br>
+</span></div>
+<div style="font-family:Tahoma; orphans:2; widows:2"><span style="font-size:18px">deep learning解决了上面问题，使用dp 分成了两个部分：</span></div>
+<div style="font-family:Tahoma; orphans:2; widows:2"><span style="font-size:18px">1.特征表示，top 的隐层为输入的特征，等价于人提取的特征，只不过这是自动提出的，收益在于一组模型参数W</span></div>
+<div style="font-family:Tahoma; orphans:2; widows:2"><span style="font-size:18px">2.问题模型：如果是分类，则提供一批lable数据，通过#1提出特征，将&lt;特征，lable&gt;作为输入，使用svm、logistic reg等模型，解决即可。</span></div>
+<div style="font-family:Tahoma; orphans:2; widows:2"><span style="font-size:18px"><br>
+</span></div>
+<div style="font-family:Tahoma; orphans:2; widows:2"><span style="font-size:18px">训练手段：</span></div>
+<div style="font-family:Tahoma; orphans:2; widows:2"><span style="font-size:18px">deep learning的重点在于如何快速的训练模型，bp是一次迭代，优化所有层参数，dp是每次训练一层，训练完毕后，该层的输出作为下一层的输入，依次训练。关键是从layer(i-1)到layer(i)采用什么样的模型进行刻画，sigmod，tan，BM等均可，不同的模型，参数求解的方法不同。</span></div>
+<div style="font-family:Tahoma; orphans:2; widows:2"><span style="font-size:18px">1.autoencoder/autodecoder, 顾名思义，把输入encode层输出，再把输出decode，原则上应该和输入完全一样，优化模型让其误差最小，layer(i-1)-&gt;layer(i)-&gt;layer(i-1)' , MIN(||layer(i-1)-layer(i-1)'||)</span></div>
+<div style="font-family:Tahoma; orphans:2; widows:2"><span style="font-size:18px">2.RBM，layer(i-1)-&gt;layer(i)-&gt;layer(i-1)'-&gt;layer(i)'</span></div>
+<div style="font-family:Tahoma; orphans:2; widows:2"><span style="font-size:18px">还有一些其他的，慢慢研究。</span></div>
+<div style="font-family:Tahoma; orphans:2; widows:2"><span style="font-size:18px">dp的目的是抽取特征，是特征表示，不是什么分类模型。</span></div>
+</div>
+   
+
+</body>
+</html>

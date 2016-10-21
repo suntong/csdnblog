@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>FSM</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/5756913<p>
+<address>&nbsp;&nbsp;标签：
+              inputtransitionoutputfunctioneach
+            
+        
+        
+            2010-07-23 09:03
+            476人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+<p>FSM</p>
+<p><strong>1.acceptor &amp; transducer</strong></p>
+<p><span id="Acceptors_and_recognizers" class="mw-headline"><strong>Acceptors :Input是否被FSM接收</strong></span></p>
+<p><span class="mw-headline">produce a binary output, saying either <em>yes</em> or <em>no</em> to answer whether the input is accepted by the machine or not. All states of the FSM are said to be either accepting or not accepting. At the time when all input is processed, if the current state is an accepting state, the input is accepted; otherwise it is rejected. As a rule the input are symbols (characters); actions are not used.</span></p>
+<p><span class="mw-headline"><strong>transducer:对input产生output,也就是对Input产生输出，比如电梯控制，</strong></span></p>
+<p><span class="mw-headline">generate output based on a given input and/or a state using actions.&nbsp;They are used for control applications and in the field of <a title="Computational linguistics" href="http://writeblog.csdn.net/wiki/Computational_linguistics"><span style="color: #ff0000;">computational linguistics</span></a>. </span></p>
+<p>&nbsp;</p>
+<p><span class="mw-headline"><span id="Determinism" class="mw-headline"><strong>Determinism：</strong></span></span></p>
+<p><span class="mw-headline"><span class="mw-headline">&nbsp;&nbsp;&nbsp;&nbsp; In deterministic automata, every state has exactly one transition for each possible input.</span></span></p>
+<p><span class="mw-headline"><span class="mw-headline">&nbsp;&nbsp;&nbsp;&nbsp; In non-deterministic automata, an input can lead to one, more than one or no transition for a given state.</span></span></p>
+<p><span class="mw-headline"></span></p>
+<p><span class="mw-headline"></span></p>
+<p><span class="mw-headline"><span class="mw-headline"><strong>Opimization:</strong></span></span></p>
+<p><span class="mw-headline"><span class="mw-headline">&nbsp;&nbsp;&nbsp;&nbsp; 最少的state 同样的效果</span></span></p>
+<p><span class="mw-headline"><span class="mw-headline">Mathmatics：</span></span></p>
+<p><span class="mw-headline"><span class="mw-headline">1.acceptor:</span></span></p>
+<p><span class="mw-headline"><span class="mw-headline">五元组,Input, States, InitialStates, FinalStates, state-transition function</span></span></p>
+<p><span class="mw-headline"><span class="mw-headline">2.transducer:</span></span></p>
+<p><span class="mw-headline"><span class="mw-headline">六元组：Input, Output States, InitialStates, state-transition function, Output Function, </span></span></p>
+<p><span class="mw-headline"></span></p>   
+
+</body>
+</html>

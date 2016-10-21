@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>[topCoder-每日一二题]--[3]</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/1362791<p>
+<address>&nbsp;&nbsp;标签：
+              bugscharacteriteratoriostreamstringcolors
+            
+        
+        
+            2006-11-02 14:56
+            1423人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+<p>问题描述：描述不准确，把英文描述贴上来</p>
+<p>
+<table>
+    <tbody>
+        <tr>
+            <td>
+            <p>A group of social bugs lives in a circular formation. These bugs are either red or green. Once every minute, a new green bug appears between each pair of adjacent bugs of different colors, and a new red bug appears between each pair of adjacent bugs of the same color. After that, all the original bugs die and the process is repeated. It is known that every initial formation of bugs will always lead to a cycle. The cycle length of the <strong>formation</strong> is defined as the amount of time between any of its two identical formations. Two formations are considered identical if one formation can be achieved by rotating and/or reversing the other one. For example via rotation, &quot;RRGG&quot; is identical to &quot;RGGR&quot;, but it is NOT identical to &quot;RGRG&quot;. Via reversal, &quot;RRGGRG&quot; is identical to &quot;GRGGRR&quot; and now via rotation it is also identical to &quot;RRGRGG&quot;. </p>
+            <p>Given a String <strong>formation</strong> of bugs on a circle return the length of the cycle for that formation. Each character in <strong>formation</strong> will be either 'R' or 'G' representing the red and green bugs respectively. The <strong>formation</strong> is circular, so the bug represented by the first character is adjacent to the bug represented by the last character in <strong>formation</strong>. </p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</p>
+<p>解决：</p>
+<p>使用01来代替RG,使得问题转化并且简化，&gt;&gt; &lt;&lt; | &amp;&nbsp;运算小　&nbsp;</p>
+<p>代码：</p>
+<p>#include &lt;set&gt;<br />#include &lt;algorithm&gt;<br />#include &lt;string&gt;<br />#include &lt;iostream&gt;<br />#include &lt;map&gt;<br />#include &lt;iterator&gt;<br />using namespace std;<br />class CircleBugs<br />{<br />private:<br />&nbsp;int rotate(int val,int n)<br />&nbsp;{<br />&nbsp;&nbsp;return (val&gt;&gt;1)|((val&amp;1)&lt;&lt;(n-1));<br />&nbsp;}<br />public:&nbsp;<br />&nbsp;int cycleLength(string form)<br />&nbsp;{<br />&nbsp;int bug = 0;<br />&nbsp;map&lt;int,int&gt;bugmap;<br />&nbsp;int len =form.size();<br />&nbsp;for(int i = 0; i &lt; len; i++)<br />&nbsp;&nbsp;if(form[i]=='G')<br />&nbsp;&nbsp;&nbsp;bug|=(1&lt;&lt;i);<br />&nbsp;for(int ci=0;;ci++)<br />&nbsp;{<br />&nbsp;&nbsp;bug=bug^rotate(bug,len);<br />&nbsp;&nbsp;for(int i = 0; i &lt; len; i++)<br />&nbsp;&nbsp;{<br />&nbsp;&nbsp;&nbsp;map&lt;int,int&gt;::iterator iter=bugmap.find(bug);<br />&nbsp;&nbsp;&nbsp;if(iter!=bugmap.end())<br />&nbsp;&nbsp;&nbsp;&nbsp;return ci-(*iter).second;<br />&nbsp;&nbsp;&nbsp;cout&lt;&lt;bug&lt;&lt;endl;<br />&nbsp;&nbsp;&nbsp;bug=rotate(bug,len);<br />&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;}<br />&nbsp;&nbsp;<br />&nbsp;&nbsp;bugmap[bug]=ci;<br />&nbsp;&nbsp;<br />&nbsp;}<br />&nbsp;}<br />};</p>   
+
+</body>
+</html>

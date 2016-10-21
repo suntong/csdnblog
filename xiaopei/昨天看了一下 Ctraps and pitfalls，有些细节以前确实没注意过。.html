@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>昨天看了一下 Ctraps and pitfalls，有些细节以前确实没注意过。</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/2584129<p>
+<address>&nbsp;&nbsp;2008-06-25 07:54
+            438人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+<p>1.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 贪心法：每一个符号应包含尽可能多的字符。所以a+++b就不能理解了。 </p>
+<p>2.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (*(void(*)())0)()的理解&nbsp; typedef void (*funcptr)(); (*(funcptr)0)() </p>
+<p>3.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 单目运算符---算术运算符---移位运算符---关系运算符---逻辑运算符 </p>
+<p>4.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 只有&amp;&amp; ||&nbsp; ?: ,保证最左到右的求值顺序。而y[i]=x[i++]不能保证先取y+i的地址 </p>
+<p>5.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 两个有符号整数相加，溢出 a+b &lt; 0，不正确，可以将a b都转化成无符号数进行判断。&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>   
+
+</body>
+</html>

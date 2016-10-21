@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>过桥时间最短的算法实现（TopCoder）</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/1265345<p>
+<address>&nbsp;&nbsp;标签：
+              算法iteratorvectoriostreamalgorithmclass
+            
+        
+        
+            2006-09-22 11:14
+            1958人阅读
+             评论(2)
+             收藏
+              举报</address><p>
+
+<p>问题描述：</p>
+<p>一群人晚上过桥，每次只能过2个人，并且需要一盏灯。&nbsp;每个人过桥时间不同。计算最短时间</p>
+<p>给出是过桥时间如{1，2，5，10}，计算出最小时间17</p>
+<p>首先 1，2 过去 时间 2&nbsp;&nbsp;&nbsp;&nbsp; </p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 回来&nbsp;&nbsp; 时间 1&nbsp;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5，10 过去 时间 10</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 回来&nbsp; &nbsp;时间&nbsp;2</p>
+<p>&nbsp;&nbsp; 1，2&nbsp;&nbsp;&nbsp;过去&nbsp;&nbsp;&nbsp; 时间&nbsp; 2</p>
+<p>总共 17</p>
+<p>未过一方：小&nbsp; &nbsp;大&nbsp;&nbsp; 小&nbsp;&nbsp; 大。。。。。</p>
+<p>过去一方&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 小&nbsp;&nbsp; 小&nbsp;&nbsp;&nbsp; 小。。。。</p>
+<p>我自己的是按照这个流程作：但是感觉效率很低，大家有什么好的思路或者这个思路的效率高的方法；</p>
+<p>&nbsp;#include &lt;vector&gt;<br />#include &lt;algorithm&gt;<br />#include &lt;iostream&gt;<br />#include &lt;set&gt;<br />#include &lt;iterator&gt;<br />using namespace std;</p>
+<p>class BridgeCrossing<br />{<br />public:<br />&nbsp;int minTime(vector &lt;int&gt; times)<br />&nbsp;{</p>
+<p>&nbsp;&nbsp;//if (times.size() &lt;= 1) {<br />&nbsp;&nbsp;//&nbsp;return times[0];<br />&nbsp;&nbsp;//}<br />&nbsp;&nbsp;//int persons = times.size();<br />&nbsp;&nbsp;//vector&lt;int&gt; left(times.begin(), times.end());<br />&nbsp;&nbsp;//vector&lt;int&gt; right(persons, 0);<br />&nbsp;&nbsp;//int mintime = 0;<br />&nbsp;&nbsp;//int lp = persons;<br />&nbsp;&nbsp;//int tmp = 0;</p>
+<p>&nbsp;&nbsp;//sort(left.begin(), left.end());<br />&nbsp;&nbsp;//while (lp &gt; 0) {<br />&nbsp;&nbsp;//&nbsp;right[0] = left[0]; lp--;<br />&nbsp;&nbsp;//&nbsp;right[1] = left[1]; lp--;<br />&nbsp;&nbsp;//&nbsp;mintime += left[1];<br />&nbsp;&nbsp;//&nbsp;if (lp &lt;= 0)<br />&nbsp;&nbsp;//&nbsp;&nbsp;return mintime;</p>
+<p>&nbsp;&nbsp;//&nbsp;mintime += right[0]; lp++;</p>
+<p>&nbsp;&nbsp;//&nbsp;right[persons - (2*tmp + 1)] = left[persons - (2*tmp + 1)]; lp--;<br />&nbsp;&nbsp;//&nbsp;right[persons - (2*tmp + 2)] = left[persons - (2*tmp + 2)]; lp--;<br />&nbsp;&nbsp;//&nbsp;mintime += left[persons - (2*tmp + 1)];<br />&nbsp;&nbsp;//&nbsp;if (lp &lt;= 0)<br />&nbsp;&nbsp;//&nbsp;&nbsp;return mintime;</p>
+<p>&nbsp;&nbsp;//&nbsp;mintime += right[1]; lp++;<br />&nbsp;&nbsp;//&nbsp;tmp++;<br />&nbsp;&nbsp;//}<br />&nbsp;<br />&nbsp;&nbsp;if(times.size()==1)<br />&nbsp;&nbsp;&nbsp;return times[0];<br />&nbsp;&nbsp;multiset&lt;int&gt; left(times.begin(),times.end());<br />&nbsp;&nbsp;multiset&lt;int&gt; right;<br />&nbsp;&nbsp;int mintime=0;<br />&nbsp;&nbsp;unsigned persons = left.size();<br />&nbsp;//&nbsp;cout&lt;&lt;&quot;end&quot;&lt;&lt;endl;<br />&nbsp;//&nbsp;copy(left.begin(),left.end(),ostream_iterator&lt;int&gt;(cout,&quot; &quot;));<br />&nbsp;<br />&nbsp;&nbsp;cout&lt;&lt;endl;<br />&nbsp;&nbsp;while(persons&gt;0)<br />&nbsp;&nbsp;{<br />&nbsp;&nbsp;&nbsp;int time=0;<br />&nbsp;&nbsp;&nbsp;multiset&lt;int&gt;::iterator iter = left.begin();<br />&nbsp;&nbsp;&nbsp;//左边2个<br />&nbsp;&nbsp;&nbsp;//第一个<br />&nbsp;&nbsp;&nbsp;time=*iter;<br />&nbsp;&nbsp;&nbsp;iter=left.erase(iter);persons--;<br />&nbsp;&nbsp;&nbsp;right.insert(time);<br />&nbsp;&nbsp;&nbsp;//第二个<br />&nbsp;&nbsp;&nbsp;time=*iter;<br />&nbsp;&nbsp;&nbsp;iter=left.erase(iter);persons--&nbsp;;<br />&nbsp;&nbsp;&nbsp;mintime+=time;<br />&nbsp;&nbsp;&nbsp;right.insert(time);</p>
+<p>&nbsp;&nbsp;&nbsp;if(persons&lt;=0)<br />&nbsp;&nbsp;&nbsp;&nbsp;return mintime;<br />&nbsp;&nbsp;&nbsp;//从右边过来一个最小的<br />&nbsp;&nbsp;&nbsp;iter = right.begin();<br />&nbsp;&nbsp;&nbsp;time=*iter;<br />&nbsp;&nbsp;&nbsp;iter=right.erase(iter);<br />&nbsp;&nbsp;&nbsp;mintime+=time;<br />&nbsp;&nbsp;&nbsp;left.insert(time);persons++;</p>
+<p>&nbsp;&nbsp;&nbsp;//左边两个最大的<br />&nbsp;&nbsp;&nbsp;iter = left.end();<br />&nbsp;&nbsp;&nbsp;&nbsp;//第一个<br />&nbsp;&nbsp;&nbsp;time = *(--iter);<br />&nbsp;&nbsp;&nbsp;mintime+=time;<br />&nbsp;&nbsp;&nbsp;iter=left.erase(iter);<br />&nbsp;&nbsp;&nbsp;right.insert(time);persons--;<br />&nbsp;&nbsp;&nbsp;//第二个<br />&nbsp;&nbsp;&nbsp;iter--;<br />&nbsp;&nbsp;&nbsp;time= *iter;<br />&nbsp;&nbsp;&nbsp;iter=left.erase(iter);<br />&nbsp;&nbsp;&nbsp;right.insert(time);persons--;<br />&nbsp;&nbsp;&nbsp;if(persons&lt;=0)<br />&nbsp;&nbsp;&nbsp;&nbsp;return mintime;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;//从右边过来一个最小的<br />&nbsp;&nbsp;&nbsp;iter = right.begin();<br />&nbsp;&nbsp;&nbsp;time=*iter;<br />&nbsp;&nbsp;&nbsp;iter=right.erase(iter);<br />&nbsp;&nbsp;&nbsp;mintime+=time;<br />&nbsp;&nbsp;&nbsp;left.insert(time);persons++;<br />&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;}</p>
+<p>&nbsp;&nbsp;return mintime;<br />&nbsp;}<br />};</p>
+<p>int _tmain(int argc, _TCHAR* argv[])<br />{<br />&nbsp;int a[] = { 1, 2, 3, 50, 99, 100 };<br />&nbsp;vector&lt;int&gt; arg(a, a + sizeof(a)/sizeof(a[0]));</p>
+<p>&nbsp;BridgeCrossing bc;<br />&nbsp;cout &lt;&lt; bc.minTime(arg) &lt;&lt; endl;</p>
+<p>&nbsp;return 0;<br />}</p>   
+
+</body>
+</html>

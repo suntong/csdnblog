@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>如何定义自己的迭代器</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/1271473<p>
+<address>&nbsp;&nbsp;标签：
+              iteratorreferencedistanceclassstructtypes
+            
+        
+        
+            2006-09-24 15:12
+            2352人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+<div align="left"><span style="FONT-SIZE: 9pt">基本上</span><span style="FONT-SIZE: 9pt" xml:lang="EN-US">iterator</span><span style="FONT-SIZE: 9pt">必须做两件事情</span><span style="FONT-SIZE: 9pt" xml:lang="EN-US"><br />1)</span><span style="FONT-SIZE: 9pt">必须指向某物</span><span style="FONT-SIZE: 9pt" xml:lang="EN-US"><br />2)</span><span style="FONT-SIZE: 9pt">他必须能够遍历任何一个有效区间。一旦定义了</span><span style="FONT-SIZE: 9pt" xml:lang="EN-US">operator* operator++</span><span style="FONT-SIZE: 9pt">通常剩下的行为就比较简单了。</span><span style="FONT-SIZE: 9pt" xml:lang="EN-US"><br /></span><span style="FONT-SIZE: 9pt">必须确定</span><span style="FONT-SIZE: 9pt" xml:lang="EN-US">iterator</span><span style="FONT-SIZE: 9pt">被正确的定义为</span><span style="FONT-SIZE: 9pt" xml:lang="EN-US">constant</span><span style="FONT-SIZE: 9pt">或者</span><span style="FONT-SIZE: 9pt" xml:lang="EN-US">mutable</span><span style="FONT-SIZE: 9pt">。这是常犯的错误之一。不过</span><span style="FONT-SIZE: 9pt" xml:lang="EN-US">input iterator</span><span style="FONT-SIZE: 9pt">不在乎这一点，因为具有只读性。</span><span style="FONT-SIZE: 9pt" xml:lang="EN-US">outputIterator</span><span style="FONT-SIZE: 9pt">具有只写性。</span><span style="FONT-SIZE: 9pt" xml:lang="EN-US"><br /></span><span style="FONT-SIZE: 9pt">对于其他的类型的</span><span style="FONT-SIZE: 9pt" xml:lang="EN-US">iterator</span><span style="FONT-SIZE: 9pt">就不一样了</span></div>
+<div align="left"><span style="FONT-SIZE: 9pt">定义自己的</span><span style="FONT-SIZE: 9pt" xml:lang="EN-US">Iterator</span><span style="FONT-SIZE: 9pt">时，必须定义五个嵌套类型，</span><span style="FONT-SIZE: 9pt" xml:lang="EN-US">iterator_category</span><span style="FONT-SIZE: 9pt">、</span><span style="FONT-SIZE: 9pt" xml:lang="EN-US">value_type</span><span style="FONT-SIZE: 9pt">、</span><span style="FONT-SIZE: 9pt" xml:lang="EN-US">difference_type</span><span style="FONT-SIZE: 9pt">、</span><span style="FONT-SIZE: 9pt" xml:lang="EN-US">pointer</span><span style="FONT-SIZE: 9pt">和</span><span style="FONT-SIZE: 9pt" xml:lang="EN-US">reference</span><span style="FONT-SIZE: 9pt">。</span></div>
+<div align="left"><span style="FONT-SIZE: 9pt" xml:lang="EN-US">STL</span><span style="FONT-SIZE: 9pt">含有一个辅助类，</span><span style="FONT-SIZE: 9pt" xml:lang="EN-US">base class iterator,</span></div>
+<div align="left"><span style="FONT-SIZE: 9pt" xml:lang="EN-US">An empty base class that provides types and that may be used to ensure that a user-defines iterator class works properly with <strong>iterator_trait</strong>s.</span></div>
+<div align="left"><strong><span style="FONT-SIZE: 9pt" xml:lang="EN-US">template&lt;class Category, class Type, class Distance = ptrdiff_t</span></strong></div>
+<div align="left"><strong><span style="FONT-SIZE: 9pt" xml:lang="EN-US">&nbsp;&nbsp; class Pointer = Type*, class Reference = Type&amp;&gt;</span></strong></div>
+<div align="left"><strong><span style="FONT-SIZE: 9pt" xml:lang="EN-US">&nbsp;&nbsp; struct iterator {</span></strong></div>
+<div align="left"><strong><span style="FONT-SIZE: 9pt" xml:lang="EN-US">&nbsp;&nbsp; typedef Category iterator_category;</span></strong></div>
+<div align="left"><strong><span style="FONT-SIZE: 9pt" xml:lang="EN-US">&nbsp;&nbsp; typedef Type value_type;</span></strong></div>
+<div align="left"><strong><span style="FONT-SIZE: 9pt" xml:lang="EN-US">&nbsp;&nbsp; typedef Distance difference_type;</span></strong></div>
+<div align="left"><strong><span style="FONT-SIZE: 9pt" xml:lang="EN-US">&nbsp;&nbsp; typedef Pointer pointer;</span></strong></div>
+<div align="left"><strong><span style="FONT-SIZE: 9pt" xml:lang="EN-US">&nbsp;&nbsp; typedef Reference reference;</span></strong></div>
+<div align="left"><strong><span style="FONT-SIZE: 9pt" xml:lang="EN-US">&nbsp;&nbsp; };</span></strong></div>
+<div align="left"><strong><span style="FONT-SIZE: 9pt" xml:lang="EN-US">Remarks</span></strong></div>
+<div align="left"><span style="FONT-SIZE: 9pt" xml:lang="EN-US">The template class serves as a base type for all iterators. It defines the member types</span></div>
+<div align="left">
+<ul type="disc">
+    <li><strong><span style="FONT-SIZE: 9pt" xml:lang="EN-US">iterator_category</span></strong> <span style="FONT-SIZE: 9pt" xml:lang="EN-US">(a synonym for the template parameter <strong>Category</strong>).</span> </li>
+    <li><strong><span style="FONT-SIZE: 9pt" xml:lang="EN-US">value_type</span></strong> <span style="FONT-SIZE: 9pt" xml:lang="EN-US">(a synonym for the template parameter <strong>Type</strong>).</span> </li>
+    <li><strong><span style="FONT-SIZE: 9pt" xml:lang="EN-US">difference_type</span></strong> <span style="FONT-SIZE: 9pt" xml:lang="EN-US">(a synonym for the template parameter <strong>Distance</strong>).</span> </li>
+    <li><strong><span style="FONT-SIZE: 9pt" xml:lang="EN-US">pointer</span></strong> <span style="FONT-SIZE: 9pt" xml:lang="EN-US">(a synonym for the template parameter <strong>Pointer</strong>).</span> </li>
+    <li><strong><span style="FONT-SIZE: 9pt" xml:lang="EN-US">reference</span></strong> <span style="FONT-SIZE: 9pt" xml:lang="EN-US">(a synonym for the template parameter <strong>Reference</strong>).</span> </li>
+</ul>
+</div>
+<div align="left"><span style="FONT-SIZE: 9pt" xml:lang="EN-US">Note that <strong>value_type</strong> should not be a constant type even if <strong>pointer</strong> points at an object of const <strong>Type</strong> and reference designates an object of const <strong>Type</strong>.</span></div>
+<div>下面是一个<span xml:lang="EN-US">iterator</span>的完整定义和使用</div>
+<div align="left"><span style="FONT-SIZE: 9pt; COLOR: blue" xml:lang="EN-US">#include</span> <span style="FONT-SIZE: 9pt" xml:lang="EN-US">&quot;stdafx.h&quot;</span></div>
+<div align="left"><span style="FONT-SIZE: 9pt; COLOR: blue" xml:lang="EN-US">#include</span> <span style="FONT-SIZE: 9pt" xml:lang="EN-US">&lt;iterator&gt;</span></div>
+<div align="left"><span style="FONT-SIZE: 9pt; COLOR: blue" xml:lang="EN-US">using</span> <span style="FONT-SIZE: 9pt" xml:lang="EN-US"><span style="COLOR: blue">namespace</span> std;</span></div>
+<div align="left"><span style="FONT-SIZE: 9pt" xml:lang="EN-US">//</span><span style="FONT-SIZE: 9pt">下面函数主要来定义迭代器，一个专门针对还含有<span xml:lang="EN-US">next</span>的铁代器</span></div>
+<div align="left"><span style="FONT-SIZE: 9pt; COLOR: blue" xml:lang="EN-US">template</span> <span style="FONT-SIZE: 9pt" xml:lang="EN-US">&lt;<span style="COLOR: blue">typename</span> Node, <span style="COLOR: blue">typename</span> Reference = Node&amp;, <span style="COLOR: blue">typename</span> Pointer = Node*&gt;</span></div>
+<div align="left"><span style="FONT-SIZE: 9pt; COLOR: blue" xml:lang="EN-US">struct</span> <span style="FONT-SIZE: 9pt" xml:lang="EN-US">node_wrap_base_iterator:<span style="COLOR: blue">public</span> iterator&lt;forward_iterator_tag,Node,ptrdiff_t,Pointer,Reference&gt;</span></div>
+<div align="left"><span style="FONT-SIZE: 9pt" xml:lang="EN-US">{</span></div>
+<div align="left"><span style="FONT-SIZE: 9pt" xml:lang="EN-US">&nbsp;&nbsp;&nbsp;&nbsp; <span style="COLOR: blue">typedef</span> node_wrap_base_iterator&lt;Node,Node&amp;,Node*&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; iterator;</span></div>
+<div align="left"><span style="FONT-SIZE: 9pt" xml:lang="EN-US">&nbsp;&nbsp;&nbsp;&nbsp; <span style="COLOR: blue">typedef</span> node_wrap_base_iterator&lt;Node,<span style="COLOR: blue">const</span> Node&amp;,<span style="COLOR: blue">const</span> Node*&gt;&nbsp;&nbsp;&nbsp; const_iterator;</span></div>
+<div align="left"><span style="FONT-SIZE: 9pt" xml:lang="EN-US">&nbsp;&nbsp;&nbsp;&nbsp; Pointer ptr;</span></div>
+<div align="left"><span style="FONT-SIZE: 9pt" xml:lang="EN-US">&nbsp;&nbsp;&nbsp;&nbsp; node_wrap_base_iterator(Pointer p = 0):ptr(p){}</span></div>
+<div align="left"><span style="FONT-SIZE: 9pt" xml:lang="EN-US">&nbsp;&nbsp;&nbsp;&nbsp; node_wrap_base_iterator(<span style="COLOR: blue">const</span> iterator&amp; x):ptr(x.ptr){}</span></div>
+<div align="left"><span style="FONT-SIZE: 9pt" xml:lang="EN-US">&nbsp;&nbsp;&nbsp;&nbsp; Reference <span style="COLOR: blue">operator</span>*()<span style="COLOR: blue">const</span>{<span style="COLOR: blue">return</span> *ptr;}</span></div>
+<div align="left"><span style="FONT-SIZE: 9pt" xml:lang="EN-US">&nbsp;&nbsp;&nbsp;&nbsp; Pointer <span style="COLOR: blue">operator</span>-&gt;()<span style="COLOR: blue">const</span>{<span style="COLOR: blue">return</span> ptr;}</span></div>
+<div align="left"><span style="FONT-SIZE: 9pt" xml:lang="EN-US">&nbsp;&nbsp;&nbsp;&nbsp; <span style="COLOR: blue">void</span> incr(){ptr=ptr-&gt;next;}</span></div>
+<div align="left"><span style="FONT-SIZE: 9pt" xml:lang="EN-US">&nbsp;&nbsp;&nbsp;&nbsp; node_wrap_base_iterator&amp; <span style="COLOR: blue">operator</span>++(){incr(); <span style="COLOR: blue">return</span> *<span style="COLOR: blue">this</span>;}</span></div>
+<div align="left"><span style="FONT-SIZE: 9pt" xml:lang="EN-US">&nbsp;&nbsp;&nbsp;&nbsp; node_wrap_base_iterator <span style="COLOR: blue">operator</span>++(<span style="COLOR: blue">int</span>){node_wrap_base_iterator tmp=*<span style="COLOR: blue">this</span>;incr();<span style="COLOR: blue">return</span> tmp;}</span></div>
+<div align="left"><span style="FONT-SIZE: 9pt" xml:lang="EN-US">&nbsp;&nbsp;&nbsp;&nbsp; <span style="COLOR: blue">bool</span> <span style="COLOR: blue">operator</span>==(<span style="COLOR: blue">const</span> node_wrap_base_iterator&amp; x) <span style="COLOR: blue">const</span> {<span style="COLOR: blue">return</span> ptr==x.ptr;}</span></div>
+<div align="left"><span style="FONT-SIZE: 9pt" xml:lang="EN-US">&nbsp;&nbsp;&nbsp;&nbsp; <span style="COLOR: blue">bool</span> <span style="COLOR: blue">operator</span>!=(<span style="COLOR: blue">const</span> node_wrap_base_iterator&amp; x) <span style="COLOR: blue">const</span> {<span style="COLOR: blue">return</span> ptr!=x.ptr;}</span></div>
+<div align="left"><span style="FONT-SIZE: 9pt" xml:lang="EN-US">};</span></div>
+<div align="left"><span style="FONT-SIZE: 9pt" xml:lang="EN-US"></span></div>
+<div align="left"><span style="FONT-SIZE: 9pt" xml:lang="EN-US">测试：</span></div>
+<div align="left"><span style="FONT-SIZE: 9pt" xml:lang="EN-US">
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; COLOR: blue; FONT-FAMILY: 新宋体" xml:lang="EN-US">typedef</span> <span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US"><span style="COLOR: blue">struct</span> Node</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US">{</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span> <span style="COLOR: blue">int</span> value;</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span> Node* next;</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US">}Node;</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US">//</span><span style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体">重载<span lang="EN-US" xml:lang="EN-US">&lt;&lt;</span></span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US">ostream&amp; <span style="COLOR: blue">operator</span>&lt;&lt;(ostream &amp; out,Node node)</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US">{</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span> out&lt;&lt;node.value;</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span> <span style="COLOR: blue">return</span> out;</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US">&nbsp;</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US">}</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US">//</span><span style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体">使用迭代器</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; COLOR: blue; FONT-FAMILY: 新宋体" xml:lang="EN-US">template</span><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US">&lt;<span style="COLOR: blue">typename</span> iterator&gt;</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; COLOR: blue; FONT-FAMILY: 新宋体" xml:lang="EN-US">void</span> <span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US">display(iterator begin,iterator end)</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US">{</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span> iterator tmp = begin;</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span> <span style="COLOR: blue">while</span>(tmp!=end&amp;&amp;tmp!=NULL)</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span> {</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> cout&lt;&lt;*tmp&lt;&lt;&quot; &quot;;</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> tmp++;</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span> }</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span> cout&lt;&lt;endl;</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US">}</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; COLOR: blue; FONT-FAMILY: 新宋体" xml:lang="EN-US">template</span> <span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US">&lt;<span style="COLOR: blue">typename</span> Iterator&gt;</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; COLOR: blue; FONT-FAMILY: 新宋体" xml:lang="EN-US">//</span><span style="FONT-SIZE: 9pt; COLOR: blue; FONT-FAMILY: 新宋体">学习使用<span lang="EN-US" xml:lang="EN-US">iterator_traits</span></span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; COLOR: blue; FONT-FAMILY: 新宋体" xml:lang="EN-US">typename</span> <span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US">iterator_traits&lt;Iterator&gt;::value_type test_traits(Iterator iter)</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US">{</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span> <span style="COLOR: blue">return</span> *iter;</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US">}</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US">&nbsp;</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; COLOR: blue; FONT-FAMILY: 新宋体" xml:lang="EN-US">#define</span> <span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US">N 10</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; COLOR: blue; FONT-FAMILY: 新宋体" xml:lang="EN-US">typedef</span> <span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US">node_wrap_base_iterator&lt;Node&gt;::iterator node_iterator;</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; COLOR: blue; FONT-FAMILY: 新宋体" xml:lang="EN-US">int</span> <span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US">_tmain(<span style="COLOR: blue">int</span> argc, _TCHAR* argv[])</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US">{</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span> Node node[N];</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span> <span style="COLOR: blue">for</span>(<span style="COLOR: blue">int</span> i=0; i&lt;N;i++)</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span> {</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> node[i].value=i;</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span style="COLOR: blue">if</span>(i &lt; N-1)</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> node[i].next=&amp;node[i+1];</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span style="COLOR: blue">else</span></span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> node[i].next=NULL;</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span> }</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span> node_iterator beg(node);</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span> node_iterator end(node+N);</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span> display(beg,end);</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span> Node test;</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span> test.value=11;</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span> test.next=NULL;</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span> node_iterator iter(&amp;test);</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span> cout&lt;&lt;test_traits(iter);</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span> cout&lt;&lt;endl;</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span> <span style="COLOR: blue">return</span> 0;</span></p>
+<p class="MsoNormal" style="TEXT-ALIGN: left" align="left"><span lang="EN-US" style="FONT-SIZE: 9pt; FONT-FAMILY: 新宋体" xml:lang="EN-US">}</span></p>
+</span><span style="FONT-SIZE: 9pt" xml:lang="EN-US"></span></div>   
+
+</body>
+</html>

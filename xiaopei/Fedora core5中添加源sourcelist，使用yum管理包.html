@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>Fedora core5中添加源sourcelist，使用yum管理包</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/1334056<p>
+<address>&nbsp;&nbsp;标签：
+              file
+            
+        
+        
+            2006-10-14 09:14
+            1881人阅读
+             评论(1)
+             收藏
+              举报</address><p>
+
+安装了Fedora core5后，使用yum来管理包很方便，但是找到的源都是外网或者不知道如何设置，没有办法使用。<br />在同学的努力下，我终于搞定了<img src="/fckeditor/editor/images/smiley/msn/tounge_smile.gif" alt="" />，分享一下。<br />其sourcelist是在/etc/yum.repos.d下面，主要修改下面3个文件。修改前备份一下<br />1. fedora-core.repo<br />修改成<br />[core]<br />name=Fedora Core $releasever - $basearch<br /><span style="font-weight: bold;">baseurl=ftp://ftp.sjtu.edu.cn/sites/fedora.redhat.com/linux/core/$releasever/$basearch/os/</span><br />#mirrorlist=http://fedora.redhat.com/download/mirrors/fedora-core-$releasever<br /><span style="font-weight: bold;">enabled=1</span><br />gpgcheck=1<br />gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora file:///etc/pki/rpm-gpg/RPM-GPG-KEY<br /><br />[core-debuginfo]<br />name=Fedora Core $releasever - $basearch - Debug<br />baseurl=http://download.fedora.redhat.com/pub/fedora/linux/core/$releasever/$basearch/debug/<br />enabled=0<br />gpgcheck=1<br />gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora file:///etc/pki/rpm-gpg/RPM-GPG-KEY<br /><br />[core-source]<br />name=Fedora Core $releasever - Source<br />baseurl=http://download.fedora.redhat.com/pub/fedora/linux/core/$releasever/source/SRPMS/<br />enabled=0<br />gpgcheck=1<br />gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora file:///etc/pki/rpm-gpg/RPM-GPG-KEY<br /><br />2. fedora-extras.repo<br />修改成<br />[core]<br />name=Fedora Core $releasever - $basearch<br /><span style="font-weight: bold;">baseurl=ftp://ftp.sjtu.edu.cn/sites/fedora.redhat.com/linux/core/$releasever/$basearch/os/</span><br />#mirrorlist=http://fedora.redhat.com/download/mirrors/fedora-core-$releasever<br /><span style="font-weight: bold;">enabled=1</span><br />gpgcheck=1<br />gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora file:///etc/pki/rpm-gpg/RPM-GPG-KEY<br /><br />[core-debuginfo]<br />name=Fedora Core $releasever - $basearch - Debug<br />baseurl=http://download.fedora.redhat.com/pub/fedora/linux/core/$releasever/$basearch/debug/<br />enabled=0<br />gpgcheck=1<br />gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora file:///etc/pki/rpm-gpg/RPM-GPG-KEY<br /><br />[core-source]<br />name=Fedora Core $releasever - Source<br />baseurl=http://download.fedora.redhat.com/pub/fedora/linux/core/$releasever/source/SRPMS/<br />enabled=0<br />gpgcheck=1<br />gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora file:///etc/pki/rpm-gpg/RPM-GPG-KEY<br /><br />3.&nbsp; fedora-updates.repo<br />修改为<br />[core]<br />name=Fedora Core $releasever - $basearch<br /><span style="font-weight: bold;">baseurl=ftp://ftp.sjtu.edu.cn/sites/fedora.redhat.com/linux/core/$releasever/$basearch/os/</span><br />#mirrorlist=http://fedora.redhat.com/download/mirrors/fedora-core-$releasever<br /><span style="font-weight: bold;">enabled=1</span><br />gpgcheck=1<br />gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora file:///etc/pki/rpm-gpg/RPM-GPG-KEY<br /><br />[core-debuginfo]<br />name=Fedora Core $releasever - $basearch - Debug<br />baseurl=http://download.fedora.redhat.com/pub/fedora/linux/core/$releasever/$basearch/debug/<br />enabled=0<br />gpgcheck=1<br />gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora file:///etc/pki/rpm-gpg/RPM-GPG-KEY<br /><br />[core-source]<br />name=Fedora Core $releasever - Source<br />baseurl=http://download.fedora.redhat.com/pub/fedora/linux/core/$releasever/source/SRPMS/<br />enabled=0<br />gpgcheck=1<br />gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora file:///etc/pki/rpm-gpg/RPM-GPG-KEY<br />   
+
+</body>
+</html>

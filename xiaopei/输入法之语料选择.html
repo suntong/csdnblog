@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>输入法之语料选择</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/29575453<p>
+<address>&nbsp;&nbsp;标签：
+              输入法手机输入法聊天语料选择
+            
+        
+        
+            2014-06-09 14:22
+            1981人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+
+<div><span style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">影响输入法体验的有两块，候选命中以及视觉交互，视觉交互就是看到的键盘以及用户的使用的方便程度，尤其是在手机输入法中，键盘布局以及一些默认设置等细节对体验影响很大。候选命中就是指用户输入拼音时，能否把用户的想要的东西放在第一位显示处理。</span>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">我们重点关注候选命中，UI是设计师的事情:)</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">影响候选命中因素很多，比如模型选择、剪枝策略等，其中决定候选命上限，也就是天花板的绝对是 训练预料，没有之一，后续的各种tricy都是为了&#36924;近这个上限。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">选择的靠谱的语料，事半功倍。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">如何选择语料呢？ 谈到语料，就需要明确下输入法的使用场景，所谓场景，就是谁来使用。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">比如使用QQ时输入聊天场景，编辑新闻时输入正文场景，写论文、医学书籍、写blog等等，都属于不同的场景。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">正常来说，所有的场景都需要，我们指的是最大化解决那个场景的问题。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">无论是PC还是手机，大家面对的大都是聊天场景，尤其是手机输入法。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">如果我们有一个T规模的聊天语料，比如QQ或者短信，很多事情可以简化。不过这个难度很大，很难获取到。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">做过了两种尝试：</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">1.使用互联网网页，随机抽取1T左右的网页作为训练预料</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">2.对互联网网页分类，新闻、blog、电商等，按照场景配比，比如使用blog语料来刻画聊天语料。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">原以为#2的效果会很好，最后对比起来，#2的效果在对比测试集合上比#1差了10%.</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">最后分析了一下，全网网页虽然是大杂烩，但是某种程度上是天然的语料配比，用户需要的多的，语料自然就多。人工无论怎么做，都是有偏差的。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">和一些朋友沟通下，大家一般都是使用全网网页来做的。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">不过如果想增加在某个场景的效果，可以认为增加一些语料，比如加入旺旺聊天语料可以增加电商方面的沟通体验。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">语料确定后，需要去噪音，训练过程是无监督的，对噪音不敏感，特殊的需要把重复的网页做一下过滤，比如一些网页，被无数网页转载，会加大某些特征出现频度，导致model偏差</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">基本上模型就ok，在模型训练时，根据model需求，做一些特殊处理。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<br>
+</div>
+   
+
+</body>
+</html>

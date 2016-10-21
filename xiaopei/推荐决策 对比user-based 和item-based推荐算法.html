@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>推荐决策 对比user-based 和item-based推荐算法</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/7695740<p>
+<address>&nbsp;&nbsp;标签：
+              数据挖掘system算法制造
+            
+        
+        
+            2012-06-27 12:40
+            9419人阅读
+             评论(1)
+             收藏
+              举报</address><p>
+
+
+<p>from: <a href="http://www.hxxiaopei.com/?p=138">http://www.hxxiaopei.com/?p=138</a></p>
+<p>最近在看项亮同学的推荐系统实践，整理一下思路。</p>
+<p></p>
+<div></div>
+<div>推荐系统，整体上有三种方式：</div>
+<ul>
+<li>user-&gt;user-&gt;item, 推荐与其相同兴趣的用户喜欢的item，user-based</li><li>user-&gt;item-&gt;item, 推荐与其喜欢的item相&#20284;的item，item-based</li><li>user-&gt;item-feature-&gt;item，抽取用户喜欢item的特征，推荐具备这些特征的item, model-based</li></ul>
+<div></div>
+<div>针对前两个，目前绝大多数采用的都是item-based，比如amazon等，谈到item-base优于user-based，但是类&#20284;digg等还是采用user-based，效果也还不错，所以不能哪个一定优于另一个，只是使用的场景不一样。</div>
+<div><span id="more-138"></span></div>
+<div>针对这两个方法作对比：</div>
+<div>user-based更多的考虑相同爱好的用户兴趣，推荐这些用户喜欢/访问过的item，和用户当前的行为关系不大，更多的是用户的这些朋友访问过什么，属于圈子的社会化行为，推荐的item是相同爱好用户最喜欢的item，所以具备热点效应，也就是推荐圈子用户访问最多的；同时也可以将圈子用户刚刚访问item推荐出来，具备很强的实时性，尤其是新引入的热点，可以很快的扩散，也能解决new-item的冷启动问题。</div>
+<div>item-based 主要考虑用户历史兴趣，推荐与用户历史喜欢item相&#20284;的item，和用户的当前行为有很大的关系，推荐的item与用户当前click的相&#20284;性，用户是可以理解的，也就是所谓的可解释性很强，推荐的item也不是热门的，很有可能是冷门(长尾)，但是和用户的兴趣相关，要求用户在这个网站上的兴趣是长久和固定的，推荐的意义在于帮助用户找到和其兴趣相关的item。推荐item和是哪个用户关系不大，所以比较好的解决新加入用户的问题。</div>
+<div></div>
+<div>所以在做推荐决策时，主要考虑如下问题：</div>
+<div>1.用户是否对该领域有固定长期的兴趣</div>
+<div>2.用户的规模</div>
+<div>3.item的规模</div>
+<div>4.新增用户的速度</div>
+<div>5.新增item的速度</div>
+<div>6.实时性要求</div>
+<div></div>
+<div>我认为第一个应该是最主要的要求，体现用户对个性化要求的程度：</div>
+<div>比如 类&#20284;指阅等新闻热点网站，以及类&#20284;youku这样用户制造item的网站，用户感兴趣的是发生了什么，大家都在看什么，而对细分领域要求不高，用户看”端午烟台轿车撞自行车队&quot;视频，同时也想看“youku我是传奇 断臂哥励志歌唱”视频，而用户历史上可能在看“甄嬛转”或者“筷子兄弟的父亲”,没有很明显的主题，也无法反映用户的兴趣，用户当前的行为，也不对接下里推荐立刻生效，用户只是实时的对热门或者其他人观看的东西感兴趣，同时item新增的速度也比较快，可以很快的让很多用户观察到，而用户增速慢，这时候user-based就是很好的选择。</div>
+<div>但是，类&#20284;douban，amazon这样的网站，用户当前的行为对推荐的item有很大的影响，比如用户在douban 我读下面看了一本推荐系统实践，能够说明用户对数据挖掘或者推荐领域有兴趣，那么推荐“recommend system handbook”是一个不错的选择，同时解释性也很强，推荐系统需要做的只是帮组用户发现该领域的知识，用户之前不知道的，满足用户需求。而事实上，分析用户的行为，用户行为focus在这些领域，具有连续性。一般来说，这些网站item的增加速度不快，比如新书/电影等不可能频繁增加。而
+ 新增的用户只要点击一个item后就可以形成推荐，所以，item规模不大，或者小于用户规模，同时item变化速度也不快时，item-based是最佳选择。</div>
+<div></div>
+<div>先整理这么多，不一定正确，慢慢感觉，随时修改</div>
+   
+
+</body>
+</html>

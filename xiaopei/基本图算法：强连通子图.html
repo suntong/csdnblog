@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>基本图算法：强连通子图</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/1532120<p>
+<address>&nbsp;&nbsp;标签：
+              算法tree
+            
+        
+        
+            2007-03-17 14:41
+            2012人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+对于给定的图G，如何取得其分解求的其强连通子图？<br /> 定义&nbsp; Gt 为transpose(G)，将所有的边反向<br />DFS（G）对G进行深度优先搜索。<br />d[u] f[u]节点u的开始和结束时间<br /><br />算法<br />DFS(G),节点按照f降序排列 <br />计算 Gt<br />计算DFS（Gt）<br />最后获得的tree中有所有的连通子图。   
+
+</body>
+</html>

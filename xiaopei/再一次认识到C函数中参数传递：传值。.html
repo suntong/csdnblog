@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>再一次认识到C函数中参数传递：传值。</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/1280396<p>
+<address>&nbsp;&nbsp;标签：
+              treecnull
+            
+        
+        
+            2006-09-25 14:55
+            811人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+<p>一般是以swap(int a,int b)引入的 参数传递时传值得，在函数中对参数的修改不对外界产生影响。</p>
+<p>于是就引入了传指针和引用。</p>
+<p>swap(int *a,int *b)传过来的是指向整型值的指针，这样就可以对他指向的内容操作。</p>
+<p>一向以为自己对这些东西掌握得很好，今天写了一个avl树的程序，关于root在构造函数里面定义为root=NULL,在插入节点时，使用的是递归方法,希望把root和普通节点一样进行处理，即插入第一个元素时，为root分配空间。结果每次运行完毕，root总是没有被分配空间。形不成树结构</p>
+<p>部分代码：</p>
+<p>template&lt;typename Type&gt;<br />int&nbsp; AVLTree&lt;Type&gt;::insertAVL(TreeNode* tree, Type data, bool &amp;taller)<br />{<br />&nbsp;&nbsp;&nbsp; if(!tree)<br />&nbsp;&nbsp;&nbsp; {<br />&nbsp;&nbsp;tree = (TreeNode*)malloc(sizeof(TreeNode));<br />&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tree-&gt;data=data;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tree-&gt;lchild=NULL;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tree-&gt;rchild=NULL;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tree-&gt;bf=EH;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; taller = true;<br />&nbsp;&nbsp;&nbsp; }<br />&nbsp;&nbsp;&nbsp; else<br />&nbsp;&nbsp;&nbsp; {<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if(data == tree-&gt;data)<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {taller=false; return 0;}<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if(data &lt; tree-&gt;data)//左子树 <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if(!insertAVL(tree-&gt;lchild,data,taller))<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return 0;//未插入，有相同元素 </p>
+<p>.......................................................</p>
+<p>经过考虑，发现自己还是对传递参数没有把握好。</p>
+<p>insertAVL(TreeNode* tree, Type data, bool &amp;taller)<br />root=NULL, 也就是root=0x00000000;</p>
+<p>作为参数传递tree=root,分配空间后</p>
+<p>tree=0x123445678。对*tree结构进行初始化</p>
+<p>但是当程序结束时，root还是为0x00000000，不会指向其他内存空间。</p>
+<p>因为是传值。能改变是只是root指向内存快的内容，比较向int *const tree,是一个指针常量，指针不可改变，但是指向的内容可以改变~</p>
+<p>如果希望改变指针内容（指针指向的地址），应该传递** 或者*&amp;,我采用了引用~</p>
+<p>template&lt;typename Type&gt;<br />int&nbsp; AVLTree&lt;Type&gt;::insertAVL(TreeNode* *tree, Type data, bool &amp;taller)</p>
+<p>template&lt;typename Type&gt;<br />int&nbsp; AVLTree&lt;Type&gt;::insertAVL(TreeNode*&amp; tree, Type data, bool &amp;taller)</p>   
+
+</body>
+</html>

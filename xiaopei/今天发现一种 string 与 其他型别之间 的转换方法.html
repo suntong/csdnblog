@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>今天发现一种 string 与 其他型别之间 的转换方法</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/1328131<p>
+<address>&nbsp;&nbsp;标签：
+              stringfloat
+            
+        
+        
+            2006-10-10 09:07
+            1655人阅读
+             评论(2)
+             收藏
+              举报</address><p>
+
+<p>今天在做topCoder时,一个函数的返回类型是&quot;No, &quot;+int型的值，也就是string和int&nbsp;的对接。直接使用str+i是不行的。于是采用了自己常用的方法：</p>
+<p>char a[100]; sprintf(a,&quot;No, &quot;%d&quot;,i);然后输出string(a)</p>
+<p>后来看了一下其他人的,发现很多人使用如下方法（自己孤陋寡闻<img alt="" src="/fckeditor/editor/images/smiley/msn/sad_smile.gif" />）：</p>
+<p>string itos(int x){ostringstream o; o&lt;&lt;x; return o.str();}</p>
+<p>int itos(string s){ istringstream in(s); int x; in&gt;&gt;x; return x;}</p>
+<p>感觉可以是string与其他型别的转换，可以根据自己的需要，只要知道需要转换到的具体型别就可以了~</p>
+<p>string ftos(float f){.......}</p>
+<p>string stof(string s){...;float f; ...&gt;&gt;f;...}</p>
+<p>应该是这样的</p>
+<p>-----知识在于点滴积累----</p>   
+
+</body>
+</html>

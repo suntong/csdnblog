@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>数据库sql操作基本命令集锦</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/1352857<p>
+<address>&nbsp;&nbsp;标签：
+              数据库sqltableinsertdelete语言
+            
+        
+        
+            2006-10-27 08:18
+            1208人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+数据库操作基本命令<br />增加列<br />&nbsp;&nbsp;&nbsp; ALTER TABLE &lt;表名&gt;<br />&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; ADD &lt;列名&gt;&lt;类型&gt;；<br />删基表<br />&nbsp;&nbsp;&nbsp; DROP TABLE &lt;表名&gt;；<br />补充主键定义<br />&nbsp;ALTER TABLE &lt;表名&gt;<br />&nbsp;&nbsp;&nbsp; ADD PRIMARY KEY(&lt;列名表&gt;)；<br />撤销主键定义<br />&nbsp; ALTER TABLE &lt;表名&gt;<br />&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; DROP PRIMARY KEY;<br /><br />查询语句<br />&nbsp;&nbsp;&nbsp; SELECT &lt;列名&gt; FROM &lt;表名&gt; WHERE condition;<br />比较<br />&nbsp;&nbsp;&nbsp; &lt;&gt;&nbsp; &lt;= &gt;= <br />时间函数<br />YEAR MONTH DAY HOURE<br />字符串函数<br />LENGTH <br />聚集函数<br />AVG MAX MIN SUM COUNT<br />条件<br />between IN LIKE EXISTS<br />分组<br />GROUP BY&nbsp;&nbsp; ORDER BYHAVING<br />数据库操纵语言<br />INSERT INSERT INTO &lt;表名&gt;<br />&nbsp;&nbsp;&nbsp; VALUES （&lt;列数据&gt;,&lt;列数据&gt;）；<br />CREATE TABLE &lt;表名&gt;<br />&nbsp;&nbsp;&nbsp; ( &nbsp; 列名 类型 非空， 列名 类型 非空 )；<br />DELETE FROM &lt;表名&gt;<br />&nbsp;&nbsp;&nbsp; WHERE ..<br />UPDATE &lt;表名&gt;<br />&nbsp;&nbsp;&nbsp; SET&nbsp; &lt;表名&gt;=?<br />&nbsp;&nbsp;&nbsp; WHERE..   
+
+</body>
+</html>

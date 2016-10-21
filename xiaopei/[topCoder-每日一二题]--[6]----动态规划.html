@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>[topCoder-每日一二题]--[6]----动态规划</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/1388940<p>
+<address>&nbsp;&nbsp;标签：
+              vectoriostreamstringmath.hiteratoralgorithm
+            
+        
+        
+            2006-11-16 21:15
+            1494人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+<p>一个比较有意思的题目，一条街上有很多房子，现在需要对房子染色(红，绿，蓝)&nbsp;，染色需要耗费资金，染成rgb耗费不同，并且相邻房子的颜色不同，求最少耗费。给出一个vector&lt;string&gt;houses,每一个元素形如&quot; 1 100 123&quot;,表示染成rgb对应的耗费。</p>
+<p>
+<table>
+    <tbody>
+        <tr>
+            <td>
+            <p>The people of RGB Street have decided to paint each of their houses red, green, or blue. They've also decided that no two neighboring houses will be painted the same color. The neighbors of house i are houses i-1 and i+1. The first and last houses are not neighbors. </p>
+            <p>You will be given a vector &lt;string&gt; <strong>houses</strong>, where the ith element corresponds to house i. Each element of <strong>houses</strong> will be formatted as &quot;R G B&quot; (quotes for clarity only), where R, G and B are the costs of painting the corresponding house red, green, and blue, respectively. Return the minimal total cost required to perform the work. </p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</p>
+<p>分析：还是利用动态规划，对于第i各房子，如果染成R cost(i,R)=min(cost(i+1,G),cost(i+1,B))同理其他，同时还是需要重复计算</p>
+<p>程序：</p>
+<p>#include &lt;set&gt;<br />#include&nbsp; &lt;vector&gt;<br />#include &lt;string&gt;<br />#include &lt;map&gt;<br />#include &lt;iostream&gt;<br />#include &lt;iterator&gt;<br />#include &lt;algorithm&gt;<br />#include &lt;stdio.h&gt;<br />#include &lt;complex&gt;<br />#include &lt;sstream&gt;<br />#include &lt;math.h&gt;<br />#include &lt;ctype.h&gt;<br />//isalnum(), isalpha(), iscntrl(), isgraph(), isprint(), ispunct(), and isspace(),isdigit(),<br />#define cp(cot,type) copy(cot.begin(),cot.end(),ostream_iterator&lt;type&gt;(cout,&quot; &quot;));cout&lt;&lt;endl<br />#define repn(i,n) for(int i = 0; i &lt; n; i++)<br />#define repc(i,a) for(int i = 0; i &lt; a.size(); i++)<br />using namespace std;<br />class RGBStreet<br />{<br />private:</p>
+<p>//求当前index层，邻居为color颜色时最小耗费，有2种颜色选择，所以只要分别计算出选择这两种颜色时的耗费，//返回小的即可　<br /><br />&nbsp;int count(int color,int index,int ret[][3],int cost[][3],int len)</p>
+<p>&nbsp;{<br />&nbsp;&nbsp;if(index==len)<br />&nbsp;&nbsp;&nbsp;return 0;<br />&nbsp;&nbsp;if(color==0)//如果当前在index,为上一层为0颜色，则只需要计算index+1层1，2，然后求得最小值返回<br />&nbsp;&nbsp;{<br />&nbsp;&nbsp;&nbsp;if((ret[index][1]!=0)&amp;&amp;(ret[index][2]!=0))<br />&nbsp;&nbsp;&nbsp;&nbsp;return min(ret[index][1], ret[index][2]);<br />&nbsp;&nbsp;&nbsp;int a = count(1,index+1,ret,cost,len);<br />&nbsp;&nbsp;&nbsp;int b = count(2,index+1,ret,cost,len);<br />&nbsp;&nbsp;&nbsp;ret[index][1]=a+cost[index][1];<br />&nbsp;&nbsp;&nbsp;ret[index][2]=b+cost[index][2];<br />&nbsp;&nbsp;&nbsp;return min(ret[index][1], ret[index][2]);&nbsp;<br />&nbsp;&nbsp;}else if(color==1)<br />&nbsp;&nbsp;{<br />&nbsp;&nbsp;&nbsp;if((ret[index][0]!=0)&amp;&amp;(ret[index][2]!=0))<br />&nbsp;&nbsp;&nbsp;&nbsp;return min(ret[index][0], ret[index][2]);<br />&nbsp;&nbsp;&nbsp;int a = count(0,index+1,ret,cost,len);<br />&nbsp;&nbsp;&nbsp;int b = count(2,index+1,ret,cost,len);<br />&nbsp;&nbsp;&nbsp;ret[index][0]=a+cost[index][0];<br />&nbsp;&nbsp;&nbsp;ret[index][2]=b+cost[index][2];<br />&nbsp;&nbsp;&nbsp;return min(ret[index][0], ret[index][2]);&nbsp;<br />&nbsp;&nbsp;}else<br />&nbsp;&nbsp;{<br />&nbsp;&nbsp;if((ret[index][1]!=0)&amp;&amp;(ret[index][0]!=0))<br />&nbsp;&nbsp;&nbsp;&nbsp;return min(ret[index][1], ret[index][0]);<br />&nbsp;&nbsp;&nbsp;int a = count(1,index+1,ret,cost,len);<br />&nbsp;&nbsp;&nbsp;int b = count(0,index+1,ret,cost,len);<br />&nbsp;&nbsp;&nbsp;ret[index][1]=a+cost[index][1];<br />&nbsp;&nbsp;&nbsp;ret[index][0]=b+cost[index][0];<br />&nbsp;&nbsp;&nbsp;return min(ret[index][1], ret[index][0]);<br />&nbsp;&nbsp;}<br />&nbsp;}<br />&nbsp;public:<br />&nbsp;int estimateCost(vector &lt;string&gt; hs)<br />&nbsp;{<br />&nbsp;&nbsp;int cost[20][3];<br />&nbsp;&nbsp;int ret[20][3];<br />&nbsp;&nbsp;int r,g,b;<br />&nbsp;&nbsp;for(int i = 0; i &lt; hs.size();i++)<br />&nbsp;&nbsp;&nbsp;sscanf(hs[i].c_str(),&quot;%d %d %d&quot;,&amp;cost[i][0],&amp;cost[i][1],&amp;cost[i][2]);<br />&nbsp;&nbsp;for(int i=0;i&lt;20;i++)<br />&nbsp;&nbsp;&nbsp;for(int j = 0;j&lt;3;j++)<br />&nbsp;&nbsp;&nbsp;&nbsp;ret[i][j]=0;<br />&nbsp;&nbsp;cout&lt;&lt;hs.size()-1&lt;&lt;endl;<br />&nbsp;&nbsp;r=count(0,1,ret,cost,hs.size())+cost[0][0];<br />&nbsp;&nbsp;g=count(1,1,ret,cost,hs.size())+cost[0][1];<br />&nbsp;&nbsp;b=count(2,1,ret,cost,hs.size())+cost[0][2];<br />&nbsp;&nbsp;return min(min(r,g),b);<br />&nbsp;&nbsp;<br />&nbsp;}<br />};</p>   
+
+</body>
+</html>

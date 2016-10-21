@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>[学习笔记]分类算法之朴树贝叶斯</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/7695730<p>
+<address>&nbsp;&nbsp;标签：
+              算法任务c
+            
+        
+        
+            2012-06-27 12:34
+            3810人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+
+<p class="first-para">from: <a href="http://www.hxxiaopei.com/?p=126">http://www.hxxiaopei.com/?p=126</a></p>
+<p class="first-para">我理解朴树贝叶斯法是实现最简单的分类算法，也是非常有效的分类算，工程上容易被接受，很常用，属于生成模型。</p>
+<h2>朴树贝叶斯模型:</h2>
+<p>\{(x_{1},y_{1}),(x_{2},y_{2}).....(x_{N},y_{N})}训练数据，类别集合<span class="MathJax_Preview"><img class="tex" alt="y={c_{1},c_{2}.....c_{K}}" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_0c65d1b109d429e6008c608e53fd81ac.gif" style="border-bottom:medium none; border-left:medium none; padding-bottom:1px; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+ ，输入特征向量为x，<span class="MathJax_Preview"><img class="tex" alt="x_{i}^{j}" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_b723b2b12a7e1fd3be74b39f8be96f1f.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+ 表示第i个样本点特征向量的j分量，在后面的计算中，<span class="MathJax_Preview"><img class="tex" alt="x_{i}^{j}" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_b723b2b12a7e1fd3be74b39f8be96f1f.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+ 会有不同的取&#20540;。</p>
+<p>朴树贝叶斯首先基于训练集合学习联合概率分布p(X,Y)，然后基于该模型，针对输入特征向量x,计算出后验概率最大的类别作为输出</p>
+<p><span class="MathJax_Preview"><img class="tex" alt="y = f(x) = argmax_{c}p(y=c|x;\theta)" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_ac3625f2b8978b6f5521a21bdbde57f0.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+</p>
+<p><span class="MathJax_Preview"><img class="tex" alt="P(X = x_{i},Y=c_{i}) = P(X = x_{i}|Y=c_{i})P(Y=c_{k})" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_ffc51475d0f34818e3e22d40de0880d8.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+ ，所以学习联合分布的的任务就是通过训练数据学习 <span class="MathJax_Preview"><img class="tex" alt="P(x_{i}|Y=c_{i}), P(Y=c_{i})" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_42aae66a3d714a1fdc19b862bb73b330.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+</p>
+<p>其中 <span class="MathJax_Preview"><img class="tex" alt=" P(X = x_{i}|Y=c_{i}) = P(X^{1} = P( x_{i}^{1}, X^{2} = x_{i}^{2}.....X^{M} = x_{i}^{M}|Y=c_{i})" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_20cedb7a5c0a05df5868c6ff66ecf9bf.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+ ，同时<span class="MathJax_Preview"><img class="tex" alt=" x_{i}^{j}" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_245aefc54ce36648cf15fa62b0a3af0f.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+ 又存在<span class="MathJax_Preview"><img class="tex" alt="S_{j}" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_81af8d9a5183838442a428b851906cd4.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+ 个不同的取&#20540;，所以模型参数个数为<span class="MathJax_Preview"><img class="tex" alt="K\prod_{j=1}^{M}S_{j}" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_d02e0b5ee2d968f9104d1f9446a378ed.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+ 当<span class="MathJax_Preview"><img class="tex" alt="M, S_{j}" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_3a1674dbc94ca2efb9d25c2eec852e8c.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+ 较大时，模型过多。</p>
+<p>所以朴树贝叶斯法对条件概率做了很强的假设：特征条件独立，即</p>
+<p><span class="MathJax_Preview"><img class="tex" alt="(X = x_{i}|Y=c_{i}) = P(X^{1} = P( x_{i}^{1}, X^{2} = x_{i}^{2}.....X^{M} = x_{i}^{M}|Y=c_{i})" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_31ad4d008ef9cd441a4627cabbe075c3.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+</p>
+<p><span class="MathJax_Preview"><img class="tex" alt=" = \prod_{j=1}^{M}P(X^{(j)} = x_{i}^{(j)}|Y = c_{k})" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_f63f540192e8fd4fae578030e59e9a06.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+</p>
+<p>参数个数为<span class="MathJax_Preview"><img class="tex" alt="K*M*S^{(j)}" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_60a8aabb806050a401e28c9d5dad5821.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+ ，引入这个假设降低了算法的复杂度，但是牺牲了准确率。</p>
+<p>训练过程也比较简单，基于训练集合，定义&#20284;然函数</p>
+<p><span class="MathJax_Preview"><img class="tex" alt="L(\theta) = P(X,Y) = P(X|Y)P(Y) = \prod_{i=1}^{N}\prod_{k=1}^{K}P(X=x_{i}|Y=c_{k})P(Y=c_{k})" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_8cf2875d6ca9e76fe360a2b6ed4f7b82.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+</p>
+<p><span class="MathJax_Preview"><img class="tex" alt="=\prod_{i=1}^{N}\prod_{j=1}^{M}\prod_{k=1}^{K}\prod_{l=1}^{S_{j}}(P(X{(j)}=f_{jl}|Y=c_{k})P(Y=c_{k}))^{I(x_{i}^{(j)} = f_{jl}, y = c_{k}})" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_8d1d9290e9405104c986927626a9b24c.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+</p>
+<p>同时满足约束条件:</p>
+<p><span class="MathJax_Preview"><img class="tex" alt="\sum_{l=1}^{S_{j}}P(X^{(j)}=f_{jl}|Y=c_{k})= 1" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_031b6b7f060c4bf21809103dae42e4fc.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+</p>
+<p><span class="MathJax_Preview"><img class="tex" alt="\sum_{k=1}^{K}P(Y=c_{k})= 1" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_d5b319fd5fc8de96fa6094085ced8e60.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+</p>
+<p>其中<span class="MathJax_Preview"><img class="tex" alt="f_{jl}" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_49daf51d0d96bd805268e81f7c9bb2f6.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+ 表示特征向量第j个分量的第l个取&#20540;，注意为了计算方便，这里假设每个分量有相同的取&#20540;个数，实际上是不一样的。</p>
+<p>构建拉&#26684;朗日函数</p>
+<p><span class="MathJax_Preview"><img class="tex" alt="\iota(\theta) = ln L(\theta) &#43;?\sum_{k=1}^{K}\lambda_{k}(1-\sum_{j=1}^{M}\sum_{l=1}^{S_{j}}P(X=f_{jl}|Y=c_{k})) &#43; \lambda(1-\sum_{k=1}^{K}P(Y = c_{k})" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_50c77589f9ed25bba610351168ea8687.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+</p>
+<p><span class="MathJax_Preview"><img class="tex" alt=" =\sum_{i=1}^{N}\sum_{j=1}^{M}\sum_{k=1}^{K}\sum_{l=1}^{S_{j}}I(x_{i}{(j)} = f_{jl}, y = c_{k} )(ln P(X=f_{jl}|Y=c_{k}) &#43; ln P(Y=c_{k})) &#43;\sum_{k=1}^{K}\lambda_{k} (1-\sum_{l=1}^{S_{j}}P(X^{(j)}=f_{jl}|Y=c_{k})) &#43; \lambda(1-\sum_{k=1}^{K}P(Y = c_{k})" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_26da2bce9643d0dd3cfc0556511ac6b6.gif" style="border-bottom:medium none; border-left:medium none; padding-bottom:2px; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+</p>
+<p>接下来求解很简单,极大&#20284;然估计，分别对参数求导即可，注意里面有拉&#26684;朗日乘子.</p>
+<p>求解<span class="MathJax_Preview"><img class="tex" alt="P(Y=c_{k})" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_4a8903eecb021acaceac60756f9ebb91.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+ ，有<span class="MathJax_Preview"><img class="tex" alt="\sum_{i=1}^{N}\sum_{j=1}^{M}\sum_{l=1}^{S_{j}}I(x_{i}{(j)} = f_{jl}, y = c_{k}) /P(Y=c_{k}) - \lambda = 0" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_6a925b31affa9ad30bac40ecff756004.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+</p>
+<p>其中 <span class="MathJax_Preview"><img class="tex" alt="\sum_{i=1}^{N}\sum_{j=1}^{M}\sum_{l=1}^{S_{j}}I(x_{i}^{(j)} = f_{jl}, y = c_{k}) = \sum_{i=1}^{N}I(y=c_{k})" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_5ee66b323137f34e886cca1015ee6442.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+</p>
+<p>则有 <span class="MathJax_Preview"><img class="tex" alt="P(Y=c_{k}) = \sum_{i=1}^{N}I(y=c_{k})\lambda " src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_db1df275c45617d5a360e1bc308ca36a.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+ ，将其带入约束条件，</p>
+<p>则有<span class="MathJax_Preview"><img class="tex" alt="\sum_{k=1}^{K}\sum_{i=1}^{N}I(y=c_{k})\lambda = 1" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_7c26860a11841c5f2d5335fe4bd9b33d.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+</p>
+<p>有 <span class="MathJax_Preview"><img class="tex" alt="\lambda = \sum_{k=1}^{K}\sum_{i=1}^{N}I(y=c_{k}) = N " src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_037480c48cfad4290da0aab07a4acf89.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+</p>
+<p>最后有 <span class="MathJax_Preview"><img class="tex" alt="P(Y=c_{k}) = \sum_{i=1}^{N}I(y=c_{k}) / N " src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_92ef8080ba3824068259e45fc35d5898.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+</p>
+<p>同样方法可以求得：</p>
+<p><span class="MathJax_Preview"><img class="tex" alt="P(X=f_{jl}) = \frac{\sum_{i=1}^{N}I(x_{i}^{(j)} = f_{jl}, y = c_{k})}{\sum_{i=1}^{N}I(y=c_{k})}" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_841b9c51b82999d326df1eb5da87992c.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+</p>
+<h2>贝叶斯估计：</h2>
+<p>存在一个问题，如果p(x=f|y=c)在训练中没有出现过，则有p(x=f|y=c)=0,导致整个结果等0，显然不是我们想要的。</p>
+<p>引入<span class="MathJax_Preview"><img class="tex" alt="\lambda" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_c6a6eb61fd9c6c913da73b3642ca147d.gif" style="border-bottom:medium none; border-left:medium none; padding-bottom:1px; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+ ，</p>
+<p><span class="MathJax_Preview"><img class="tex" alt="p(X^{(j)} = f_{jl}|Y =c_{k}) = \frac{\sum_{i=1}^{N}I(x_{i}^{(j)} = f_{jl}, y = c_{k}) &#43; \lambda}{\sum_{i=1}^{N}I(y=c_{k}) &#43;S_{l}\lambda}" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_72dd3ea48577e297e36e1764b8b83abe.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+</p>
+<p>虽然引入<span class="MathJax_Preview"><img class="tex" alt="\lambda" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_c6a6eb61fd9c6c913da73b3642ca147d.gif" style="border-bottom:medium none; border-left:medium none; padding-bottom:1px; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+ ，有<span class="MathJax_Preview"><img class="tex" alt="\sum_{l=1}^{S_{j}}p(X^{(j)} = f_{jl}|Y =c_{k}) =1" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_c8d2557c7b8842445f309e0ce8cbe129.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+ ，满足约束</p>
+<p>如果<span class="MathJax_Preview"><img class="tex" alt="\lambda =1 " src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_aaac1c56b3240215eb22552e592ce392.gif" style="border-bottom:medium none; border-left:medium none; padding-bottom:1px; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+ 则是拉普拉斯估计。</p>
+<p>同样 <span class="MathJax_Preview"><img class="tex" alt="P(Y = c_{k}) = \frac{\sum_{i=1}^{N}I(y_{i} = c_{k}) &#43; \lambda}{N &#43; K\lambda}" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_3af22e11d6b08db2847d663a0dd98458.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+</p>
+<p>分母中<span class="MathJax_Preview"><img class="tex" alt="\lambda" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_c6a6eb61fd9c6c913da73b3642ca147d.gif" style="border-bottom:medium none; border-left:medium none; padding-bottom:1px; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+ 的系数，依赖于类别的个数，即不同参数的个数</p>
+<h2>思考：</h2>
+<p>1.朴树贝叶斯有强假设，特征条件独立这个假设对准确率牺牲成都多大，相对于其他分类方法，比如logistic 回归，准确率怎么样</p>
+<p>2.特征&#20540;为离散&#20540;，实际使用时，将连续value离散化，使用朴树贝叶斯，与直接使用其他分类法，准确率是否有区别</p>
+   
+
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>输入法之模型训练</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/29842851<p>
+<address>&nbsp;&nbsp;标签：
+              输入法数据挖掘算法产品
+            
+        
+        
+            2014-06-10 14:59
+            1994人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+
+<div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">输入法，尤其是拼音输入法，解决的就是一些序列标注的问题，针对给定的状态(拼音)，获取其概率最高的隐状态(中文)。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">这个是一个标准的HMM，针对HMM的解码过程，是一个很成熟也很完备的东西。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">local的计算和存储能力都有限，我们选择一般是二阶马尔科夫，也就是所谓的bigram model。 高阶对质量会有帮助，但是涉及到存储和计算，工程上不可行。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">同理，利用ME 以及CRFmodel都可以解决这一类的标注问题，同样是工程上的问题，不太可行。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">确定了采用bigram model，那么训练过程也就很确定：</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">1.Segment and Count bigram&amp;unigram</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">2.smoothing&nbsp;</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">3.prunning</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">在seg之前，需要对我们的训练语料做一下预处理，输入法重点关注的是中文以及中文的关系，所以需要对其中的英文以及符号等分割做一个预处理，不然会增加后期剪枝的复杂度。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">一版的做法是，针对里面的英文，可以用一个统一的ENGLISH的标记代替，尽量不要去掉，而对于符号，作为句子的分隔符号，将整个句子折断成一个一个纯中文的短句，作为训练语料。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">作为完备的model，会包括 开始符号BOS 以及结束符EOS，则可以保证整个model是封闭的。不过针对输入法，这个不是必须的，对于输入过程，用户的每一次开始输入，都不一定是句子的开始，强行加上去，不一定有好的效果。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px"><br>
+</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">作为训练过程#1 没有什么好说的，直接处理就行。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">#2是很关键的一个，HMM的解码，涉及到大量的转义概率乘，如果两个状态的概率没看到，那么转义概率为0，整个相乘链就为0，显然不合理。所以需要平滑，其实就是通过策略为没有看到的二元对提供一个默认的计算方式。</div>
+<div style="font-family:Tahoma; orphans:2; widows:2; font-size:14px">#3 二元对之间的关系很多，一版在1B规模以上，而输入法智能很用很小规模(1kw)，那么就需要对这个进行剪枝，剪枝非常重要，最大限度的保证剪枝后模型的准确率和剪枝前相近,后面详细介绍。</div>
+</div>
+   
+
+</body>
+</html>

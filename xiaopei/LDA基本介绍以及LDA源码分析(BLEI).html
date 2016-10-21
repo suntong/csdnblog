@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>LDA基本介绍以及LDA源码分析(BLEI)</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/8034308<p>
+<address>&nbsp;&nbsp;标签：
+              文档randomstatisticsparametersphpnull
+            
+        
+        
+            2012-09-30 17:49
+            18936人阅读
+             评论(4)
+             收藏
+              举报</address><p>
+
+
+<div>Blei
+<div><strong><span style="font-size:24px">基本介绍：</span></strong><br>
+<span style="font-size:14px">&nbsp;</span>
+<div>topic model，之前已经介绍过(<a href="http://blog.csdn.net/hxxiaopei/article/details/7617838">http://blog.csdn.net/hxxiaopei/article/details/7617838</a>)</div>
+<div>topic model本质上就一个套路，在doc-word user-url user-doc等关系中增加topic层，扩充为2层结构，一方面可以降维，另一方面挖掘深层次的关系，用户doc word user url的聚类。</div>
+<div>LDA的理论知识不介绍太多，基本就讲了原理以及推导两个内容，原理比较简单，推导过程貌&#20284;很简单，就一个变分加上一些参数估计的方法就搞定了，但是具体的细节还没明白，以后慢慢研究。</div>
+<div>简单介绍下基本原理以及有意义的几个公式：</div>
+<div><br>
+</div>
+<div>plsa作为topic-model ，每篇文档对应一系列topics,每个topic对应一批terms，有如下问题：</div>
+<div>1.每篇文档及其在topic上的分布都是模型参数，也就是模型参数随着文档的数目增加而增加，这样容易导致overfitting</div>
+<div>2.对于new doc，如何确定其topic 分布</div>
+<div><br>
+</div>
+<div>LDA解决这个问题，没必要把每个doc-topic分布作为模型参数，为doc-topic分布增加一个先验概率，限制整体上文档的topic分布，具体先验分布的作用，之前已经介绍过。</div>
+<div>doc-topic分布服从多项分布，狄利克雷分布是其共轭先验。</div>
+<div>这样参数的个数就变成K &#43;　N*K, N为词个数，K为topic个数，与文档个数无关。</div>
+<div>如果我想知道一个文档的topic分布怎么办？下面介绍下train以及predic的方法。</div>
+<div>作者采用了<span style="color:rgb(69,69,69); font-family:'Microsoft Yahei',微软雅黑,Tahoma,Arial,Helvetica,STHeiti; font-size:14px; line-height:21px">varitional inference进行推导，过程就免了，列出来几个重要的公式：</span></div>
+<div><br>
+</div>
+<div><strong><span style="font-size:24px">论文中几个重要公式：</span></strong></div>
+<div><span style="font-size:14px">概率模型：</span></div>
+<div><em><span style="font-size:14px">D 表示文档集合，最后就是保证P(D|α，β)最大。<img src="http://img.my.csdn.net/uploads/201209/30/1348996066_4025.png" alt=""></span></em></div>
+</div>
+</div>
+<div><em></em>
+<div>
+<div><br>
+</div>
+<div><img src="file:///C:/Users/pig/AppData/Local/Temp/enhtmlclip/Image(4).png" alt=""></div>
+<div><br>
+</div>
+<div>phi的迭代公式，表示文档中单词n在topic i上的分布:</div>
+<div><img src="http://img.my.csdn.net/uploads/201209/30/1348996095_6367.png" alt=""><br>
+</div>
+<div><img src="file:///C:/Users/pig/AppData/Local/Temp/enhtmlclip/Image(2).png" alt=""></div>
+<div>gamma的迭代公式，文档在topic上的分布</div>
+<div><img src="file:///C:/Users/pig/AppData/Local/Temp/enhtmlclip/Image(5).png" alt=""></div>
+<div><img src="http://img.my.csdn.net/uploads/201209/30/1348996112_1438.png" alt=""><br>
+</div>
+<div>Beta的迭代公式，model中topic-word分布：</div>
+<div><img src="http://img.my.csdn.net/uploads/201209/30/1348996115_4707.png" alt=""><br>
+</div>
+<div><img src="file:///C:/Users/pig/AppData/Local/Temp/enhtmlclip/Image(6).png" alt=""></div>
+<div>alpha的迭代公式，model中文档-topic分布的先验参数，利用梯度下降法即可求解：</div>
+<div><img src="http://img.my.csdn.net/uploads/201209/30/1348996120_4452.png" alt=""><br>
+</div>
+<div><img src="file:///C:/Users/pig/AppData/Local/Temp/enhtmlclip/Image.png" alt=""></div>
+<div><span style="font-family:Tahoma"><span style="font-size:14px"><em><br>
+</em></span></span></div>
+<div><span style="font-family:Tahoma; font-size:14px"><em><br>
+</em></span></div>
+<div>LDA最核心的迭代公式，针对每一篇文档，计算每个词的topic分布，从而计算文档的topic分布：</div>
+<div><img src="http://img.my.csdn.net/uploads/201209/30/1348997287_3633.jpg" alt=""><br>
+</div>
+<div><img src="file:///C:/Users/pig/AppData/Local/Temp/enhtmlclip/Image.jpg" alt=""></div>
+</div>
+<span style="font-family:Tahoma; font-size:14px"><em>变分后，计算出来的&#20284;然函数，其&#20284;然&#20540;用户判断迭代的收敛程度：</em></span><br>
+</div>
+<div><span style="font-family:Tahoma; font-size:14px"><em><img src="http://img.my.csdn.net/uploads/201209/30/1348997271_5352.png" alt=""><br>
+</em></span></div>
+<div><span style="font-family:Tahoma; font-size:14px"><em><br>
+</em></span></div>
+<div><span style="font-family:Tahoma"></span>
+<div>
+<div><span style=""><span style="font-size:24px"><strong>基本逻辑：</strong></span></span></div>
+<div style="font-size:14px"><span style="">1.初始模型参数，开始迭代，执行2,3,4,直至收敛</span></div>
+<div style="font-size:14px"><span style="">2.针对每一篇文档，初始gamma以及phi参数，迭代该参数，直至收敛</span></div>
+<div style="font-size:14px"><span style="">&nbsp; &nbsp; &nbsp;2.1.计算文档中每个单词在topic上的分布，利用model中beta以及文档-topic分布（2.2）</span></div>
+<div style="font-size:14px"><span style="">&nbsp; &nbsp; &nbsp;2.2.计算文档-topic分布，利用模型参数alpha以及word-topic分布（2.1结果)</span></div>
+<div style="font-size:14px"><span style="">3.update模型参数beta，利用word-topic分布。</span></div>
+<div style="font-size:14px"><span style="">4.update模型参数alpha，利用2.2的结果gamma</span></div>
+</div>
+<div>
+<div><span style="font-family:Tahoma; font-size:14px"><br>
+</span></div>
+</div>
+<br>
+</div>
+<div><span style="font-family:Tahoma"><br>
+</span></div>
+<div><span style="font-family:Tahoma"></span>
+<div>
+<div><span style=""><span style="font-size:24px"><strong>源码介绍</strong></span></span></div>
+<div><span style=""><br>
+</span></div>
+<div><span style=""></span>
+<div><span style="">模型参数：</span></div>
+<div><span style="">var_gamma:文档-topic分布，每篇文档都会计算其topic分布</span></div>
+<div><span style="">phi: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;word-topic分布，针对每篇文档，计算文档中每个word的topic分布</span></div>
+<div><span style="">lda_mode: &nbsp; &nbsp;lad的模型参数，里面包括beta以及alpha</span></div>
+<div><span style="">lda_suffstats: 记录统计信息，比如每个topic上每个word出现的次数，这是为了计算lda_model而存在</span></div>
+<div><span style="">corpus： &nbsp; &nbsp; &nbsp; &nbsp;全部文档信息</span></div>
+<div><span style="">document： &nbsp; &nbsp;文档的具体信息，包括word信息</span></div>
+<br>
+</div>
+<div><span style=""><strong>corpus_initialize_ss</strong>：初始化 ss，随机选择一些文档，利用文档词信息update ss 里面topic上term的频度</span></div>
+<div><span style=""><br>
+</span></div>
+<div>
+<table border="1" cellpadding="2" cellspacing="0" width="100%">
+<tbody>
+<tr>
+<td valign="top">&nbsp; &nbsp; for (k = 0; k &lt; num_topics; k&#43;&#43;)<br>
+&nbsp;&nbsp;&nbsp; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (i = 0; i &lt; NUM_INIT; i&#43;&#43;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; d = floor(myrand() * c-&gt;num_docs);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; printf(&quot;initialized with document %d\n&quot;, d);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; doc = &amp;(c-&gt;docs[d]);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (n = 0; n &lt; doc-&gt;length; n&#43;&#43;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ss-&gt;class_word[k][doc-&gt;words[n]] &#43;= doc-&gt;counts[n];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (n = 0; n &lt; model-&gt;num_terms; n&#43;&#43;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ss-&gt;class_word[k][n] &#43;= 1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ss-&gt;class_total[k] = ss-&gt;class_total[k] &#43; ss-&gt;class_word[k][n];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
+&nbsp;&nbsp;&nbsp; }</td>
+</tr>
+</tbody>
+</table>
+<div><span style=""><br>
+</span></div>
+<div><span style="">random_initialize_ss：随机选取一些&#20540;初始化ss</span></div>
+</div>
+<div><span style=""><br>
+</span></div>
+<div><span style=""><strong>run_em</strong>：执行EM算法，针对每篇文档，利用其单词以及初始化的β和α信息 更新模型，直至收敛。</span></div>
+<div><span style="">该函数是一个框架性质的，具体的见下。</span></div>
+<div>
+<table border="1" cellpadding="2" cellspacing="0" width="100%">
+<tbody>
+<tr>
+<td valign="top">void run_em(char* start, char* directory, corpus* corpus)<br>
+{<br>
+<br>
+&nbsp;&nbsp;&nbsp; int d, n;<br>
+&nbsp;&nbsp;&nbsp; lda_model *model = NULL;<br>
+&nbsp;&nbsp;&nbsp; double **var_gamma, **phi;<br>
+<br>
+&nbsp;&nbsp;&nbsp; // allocate variational parameters<br>
+<br>
+&nbsp;&nbsp;&nbsp; var_gamma = malloc(sizeof(double*)*(corpus-&gt;num_docs));<br>
+&nbsp;&nbsp;&nbsp; for (d = 0; d &lt; corpus-&gt;num_docs; d&#43;&#43;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp; var_gamma[d] = malloc(sizeof(double) * NTOPICS);<br>
+<br>
+&nbsp;&nbsp;&nbsp; int max_length = max_corpus_length(corpus);<br>
+&nbsp;&nbsp;&nbsp; phi = malloc(sizeof(double*)*max_length);<br>
+&nbsp;&nbsp;&nbsp; for (n = 0; n &lt; max_length; n&#43;&#43;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp; phi[n] = malloc(sizeof(double) * NTOPICS);<br>
+<br>
+&nbsp;&nbsp;&nbsp; // initialize model<br>
+<br>
+&nbsp;&nbsp;&nbsp; char filename[100];<br>
+<br>
+&nbsp;&nbsp;&nbsp; lda_suffstats* ss = NULL;<br>
+&nbsp;&nbsp;&nbsp; if (strcmp(start, &quot;seeded&quot;)==0)<br>
+&nbsp;&nbsp;&nbsp; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; model = new_lda_model(corpus-&gt;num_terms, NTOPICS);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ss = new_lda_suffstats(model);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; corpus_initialize_ss(ss, model, corpus);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; lda_mle(model, ss, 0);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; model-&gt;alpha = INITIAL_ALPHA;<br>
+&nbsp;&nbsp;&nbsp; }<br>
+&nbsp;&nbsp;&nbsp; else if (strcmp(start, &quot;random&quot;)==0)<br>
+&nbsp;&nbsp;&nbsp; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; model = new_lda_model(corpus-&gt;num_terms, NTOPICS);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ss = new_lda_suffstats(model);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; random_initialize_ss(ss, model);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; lda_mle(model, ss, 0);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; model-&gt;alpha = INITIAL_ALPHA;<br>
+&nbsp;&nbsp;&nbsp; }<br>
+&nbsp;&nbsp;&nbsp; else<br>
+&nbsp;&nbsp;&nbsp; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; model = load_lda_model(start);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ss = new_lda_suffstats(model);<br>
+&nbsp;&nbsp;&nbsp; }<br>
+<br>
+&nbsp;&nbsp;&nbsp; sprintf(filename,&quot;%s/000&quot;,directory);<br>
+&nbsp;&nbsp;&nbsp; save_lda_model(model, filename);<br>
+<br>
+&nbsp;&nbsp;&nbsp; // run expectation maximization<br>
+<br>
+&nbsp;&nbsp;&nbsp; int i = 0;<br>
+&nbsp;&nbsp;&nbsp; double likelihood, likelihood_old = 0, converged = 1;<br>
+&nbsp;&nbsp;&nbsp; sprintf(filename, &quot;%s/likelihood.dat&quot;, directory);<br>
+&nbsp;&nbsp;&nbsp; FILE* likelihood_file = fopen(filename, &quot;w&quot;);<br>
+<br>
+&nbsp;&nbsp;&nbsp; while (((converged &lt; 0) || (converged &gt; EM_CONVERGED) || (i &lt;= 2)) &amp;&amp; (i &lt;= EM_MAX_ITER))<br>
+&nbsp;&nbsp;&nbsp; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; i&#43;&#43;;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; likelihood = 0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; zero_initialize_ss(ss, model);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // e-step<br>
+<br>
+<strong>//这里是核心，针对每篇文档计算相关模型参数<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (d = 0; d &lt; corpus-&gt;num_docs; d&#43;&#43;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br>
+&nbsp; &nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; likelihood &#43;= doc_e_step(&amp;(corpus-&gt;docs[d]),<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; var_gamma[d],<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; phi,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; model,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ss);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // m-step<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; lda_mle(model, ss, ESTIMATE_ALPHA);</strong><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // check for convergence<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; converged = (likelihood_old - likelihood) / (likelihood_old);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (converged &lt; 0) VAR_MAX_ITER = VAR_MAX_ITER * 2;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; likelihood_old = likelihood;<br>
+</td>
+</tr>
+<tr>
+<td valign="top">&nbsp;</td>
+</tr>
+</tbody>
+</table>
+<div><span style=""><br>
+</span></div>
+</div>
+<div><span style=""><span style=""><strong>doc_e_step</strong></span><span style="">：执行EM中的E-step，干了两件事情</span></span></div>
+<div><span style="">1.基于文档的单词，update φ以及γ，得到doc-topic 分布以及 word-topic分布(</span>lda_inference）</div>
+<div><span style="">2.利用γ信息，更新α，这里的α只有一个参数，所以计算方式不同。</span></div>
+<div><span style=""><img src="http://img.my.csdn.net/uploads/201209/30/1348996115_4707.png" alt=""><br>
+</span></div>
+<div><span style=""><img src="http://img.my.csdn.net/uploads/201209/30/1348997284_2484.png" alt=""></span></div>
+<div></div>
+<div><span style=""><br>
+</span></div>
+<div><span style=""><img src="file:///C:/Users/pig/AppData/Local/Temp/enhtmlclip/Image.png" alt="" style=""></span></div>
+<div><span style=""><span style=""><img src="file:///C:/Users/pig/AppData/Local/Temp/enhtmlclip/Image(6).png" alt="" style=""></span></span></div>
+<div>
+<div><span style=""><span style=""><span style="">本来应该是αi = αi &#43;　<img src="http://img.my.csdn.net/uploads/201209/30/1348997291_6617.png" alt=""></span>，但是实际α只有一个，所以作者通过在所有topic上的分布计算出α。</span></span></div>
+<div>每篇文档迭代一次，遍历完所有文档后，就计算出最后的α。</div>
+<div><br>
+</div>
+<br>
+</div>
+<div>
+<table border="1" cellpadding="2" cellspacing="0" width="100%">
+<tbody>
+<tr>
+<td valign="top">double doc_e_step(document* doc, double* gamma, double** phi,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; lda_model* model, lda_suffstats* ss)<br>
+{<br>
+&nbsp;&nbsp;&nbsp; double likelihood;<br>
+&nbsp;&nbsp;&nbsp; int n, k;<br>
+<br>
+&nbsp;&nbsp;&nbsp; // posterior inference<br>
+<br>
+&nbsp;&nbsp;&nbsp; likelihood = lda_inference(doc, model, gamma, phi);<br>
+<br>
+&nbsp;&nbsp;&nbsp; // update sufficient statistics<br>
+<br>
+&nbsp;&nbsp;&nbsp; double gamma_sum = 0;<br>
+&nbsp;&nbsp;<strong>&nbsp; for (k = 0; k &lt; model-&gt;num_topics; k&#43;&#43;)<br>
+&nbsp;&nbsp;&nbsp; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; gamma_sum &#43;= gamma[k];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ss-&gt;alpha_suffstats &#43;= digamma(gamma[k]);<br>
+&nbsp;&nbsp;&nbsp; }<br>
+&nbsp;&nbsp;&nbsp; ss-&gt;alpha_suffstats -= model-&gt;num_topics * digamma(gamma_sum);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;for (n = 0; n &lt; doc-&gt;length; n&#43;&#43;)<br>
+&nbsp;&nbsp;&nbsp; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (k = 0; k &lt; model-&gt;num_topics; k&#43;&#43;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ss-&gt;class_word[k][doc-&gt;words[n]] &#43;= doc-&gt;counts[n]*phi[n][k];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ss-&gt;class_total[k] &#43;= doc-&gt;counts[n]*phi[n][k];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
+&nbsp;&nbsp;&nbsp; }</strong><br>
+<br>
+&nbsp;&nbsp;&nbsp; ss-&gt;num_docs = ss-&gt;num_docs &#43; 1;<br>
+<br>
+&nbsp;&nbsp;&nbsp; return(likelihood);<br>
+}</td>
+</tr>
+</tbody>
+</table>
+<div><br>
+</div>
+</div>
+<div><strong><span style="font-size:14px">lad_inference</span></strong>：这是最核心的code，基于每个doc，计算对应γ和φ，也就是doc-topic以及word-topic分布。也就是如下代码：</div>
+<div><span style=""><img src="file:///C:/Users/pig/AppData/Local/Temp/enhtmlclip/Image.jpg" alt="" style=""></span></div>
+<div>利用topic个数以及word个数，初始化γ以及φ。</div>
+<div>严&#26684;实现这个过程，工程做了优化，对φ取了对数logφ，这样降低计算复杂度，同时利用<strong>log_sum</strong>接口<strong>，计算log(φ1) log(φ2)...log(φk)计算出log(φ1&#43;φ2.....&#43;φk)，</strong>这样利用(logφ1)-log(φ1&#43;φ2.....&#43;φk)即可完成归一化。</div>
+<div>利用：</div>
+<div><img src="http://img.my.csdn.net/uploads/201209/30/1348997287_3633.jpg" alt=""><br>
+</div>
+<div>解释下代码：</div>
+<div>&nbsp; &nbsp; &nbsp;针对文档中的每一个词 n:</div>
+<div>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 针对每个topic i：</div>
+<div>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;单词n在topic i上的分布为：φni = topic i在word n上的分布 × exp(<span style="font-family:arial,宋体,sans-serif; font-size:14px; line-height:24px">Digamma(</span>该文档在toic i上的分布))</div>
+<div>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;归一化 φni</div>
+<div>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;文档在topic上的分布γi = 其先验分布αi &#43; 文档内所有词在topic i上的分布&#20540;和</div>
+<div><br>
+</div>
+<div>lda-infernce，不只是在train的时候使用，对于一片新的文档，同样是通过该函数/方法计算文档在tpoic上的分布，只依赖于模型参数α以及β</div>
+<div>利用：</div>
+<div>
+<table border="1" cellpadding="2" cellspacing="0" width="100%">
+<tbody>
+<tr>
+<td valign="top">double lda_inference(document* doc, lda_model* model, double* var_gamma, double** phi)<br>
+{<br>
+&nbsp;&nbsp;&nbsp; double converged = 1;<br>
+&nbsp;&nbsp;&nbsp; double phisum = 0, likelihood = 0;<br>
+&nbsp;&nbsp;&nbsp; double likelihood_old = 0, oldphi[model-&gt;num_topics];<br>
+&nbsp;&nbsp;&nbsp; int k, n, var_iter;<br>
+&nbsp;&nbsp;&nbsp; double digamma_gam[model-&gt;num_topics];<br>
+<br>
+&nbsp;&nbsp;&nbsp; // compute posterior dirichlet<br>
+&nbsp;&nbsp;&nbsp;&nbsp; //init gama and php<br>
+&nbsp;&nbsp;&nbsp; for (k = 0; k &lt; model-&gt;num_topics; k&#43;&#43;)<br>
+&nbsp;&nbsp;&nbsp; {<br>
+<strong><a>//初始化</a>&nbsp;γ以及φ<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; var_gamma[k] = model-&gt;alpha &#43; (doc-&gt;total/((double) model-&gt;num_topics));<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; digamma_gam[k] = digamma(var_gamma[k]);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (n = 0; n &lt; doc-&gt;length; n&#43;&#43;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; phi[n][k] = 1.0/model-&gt;num_topics;</strong><br>
+&nbsp;&nbsp;&nbsp; }<br>
+&nbsp;&nbsp;&nbsp; var_iter = 0;<br>
+<br>
+&nbsp;&nbsp;&nbsp; while ((converged &gt; VAR_CONVERGED) &amp;&amp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ((var_iter &lt; VAR_MAX_ITER) || (VAR_MAX_ITER == -1)))<br>
+&nbsp;&nbsp;&nbsp; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp; var_iter&#43;&#43;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp; for (n = 0; n &lt; doc-&gt;length; n&#43;&#43;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; phisum = 0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (k = 0; k &lt; model-&gt;num_topics; k&#43;&#43;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; oldphi[k] = phi[n][k];<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;//对于每个word，更新对应的topic，也就是公式中<img src="file:///C:/Users/pig/AppData/Local/Temp/enhtmlclip/Image(9).png" alt="" style="">的对数结果<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>phi[n][k] =&nbsp;digamma_gam[k] &#43;&nbsp;model-&gt;log_prob_w[k][doc-&gt;words[n]];</strong><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (k &gt; 0)<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;<strong>//为归一化做准备，通过log(a)&nbsp;&#43;log(b)计算log(a&#43;b)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; phisum = log_sum(phisum, phi[n][k]);</strong><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; phisum = phi[n][k]; // note, phi is in log space<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (k = 0; k &lt; model-&gt;num_topics; k&#43;&#43;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>&nbsp;&nbsp;&nbsp; phi[n][k] = exp(phi[n][k] - phisum);//归一化<br>
+<br>
+</strong><a>//update</a>&nbsp;γ，这里面没有用到α，原始公式不同<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; var_gamma[k] =var_gamma[k] &#43; doc-&gt;counts[n]*(phi[n][k] - oldphi[k]);</strong><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // !!! a lot of extra digamma's here because of how we're computing it<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // !!! but its more automatically updated too.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; digamma_gam[k] = digamma(var_gamma[k]);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; printf(&quot;%d:%d: gmama: %f php: %f\n&quot;, n, k, var_gmama[k], php[n][k]);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
+//计算&#20284;然结果，观察是否收敛，计算采用公式<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; likelihood = compute_likelihood(doc, model, phi, var_gamma);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; assert(!isnan(likelihood));<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; converged = (likelihood_old - likelihood) / likelihood_old;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; likelihood_old = likelihood;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // printf(&quot;[LDA INF] %8.5f %1.3e\n&quot;, likelihood, converged);<br>
+&nbsp;&nbsp;&nbsp; }<br>
+&nbsp;&nbsp;&nbsp; return(likelihood);<br>
+}</td>
+</tr>
+</tbody>
+</table>
+<div><br>
+</div>
+</div>
+<div><span style="font-size:18px">compute&nbsp;<strong>likehood</strong></span>：这个函数实现的是blei LDA 公式15，也就是定义的&#20284;然函数，比较复杂，但是严&#26684;按照这个实现。</div>
+<div>需要注意的是，blei的代码，k个α&#20540;相同，计算时 包含α的计算进行了简化。</div>
+<div>利用：</div>
+<div><img src="http://img.my.csdn.net/uploads/201209/30/1348997271_5352.png" alt="" style="font-size:14px; font-style:italic"><br>
+</div>
+<div><img src="file:///C:/Users/pig/AppData/Local/Temp/enhtmlclip/Image(4).png" alt="" style=""></div>
+<div>
+<table border="1" cellpadding="2" cellspacing="0" width="100%">
+<tbody>
+<tr>
+<td valign="top">double<br>
+compute_likelihood(document* doc, lda_model* model, double** phi, double* var_gamma)<br>
+{<br>
+&nbsp;&nbsp;&nbsp; double likelihood = 0, digsum = 0, var_gamma_sum = 0, dig[model-&gt;num_topics];<br>
+&nbsp;&nbsp;&nbsp; int k, n;<br>
+<br>
+&nbsp;&nbsp;&nbsp; for (k = 0; k &lt; model-&gt;num_topics; k&#43;&#43;)<br>
+&nbsp;&nbsp;&nbsp; {<br>
+<strong>&nbsp;&nbsp;&nbsp;&nbsp; dig[k] = digamma(var_gamma[k]);<br>
+&nbsp;&nbsp;&nbsp;&nbsp; var_gamma_sum &#43;= var_gamma[k];</strong><br>
+&nbsp;&nbsp;&nbsp; }<br>
+&nbsp;&nbsp;<strong>&nbsp; digsum = digamma(var_gamma_sum);</strong><br>
+<br>
+lgamma(α*k) - k*lgamma(alpha)<br>
+&nbsp;&nbsp;&nbsp; likelihood =<br>
+&nbsp;&nbsp;&nbsp;&nbsp; lgamma(model-&gt;alpha * model -&gt; num_topics)<br>
+&nbsp;&nbsp;&nbsp;&nbsp; - model -&gt; num_topics * lgamma(model-&gt;alpha)<br>
+&nbsp;&nbsp;&nbsp;&nbsp; - (lgamma(var_gamma_sum));<br>
+<br>
+&nbsp;&nbsp;&nbsp; for (k = 0; k &lt; model-&gt;num_topics; k&#43;&#43;)<br>
+&nbsp;&nbsp;&nbsp; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp; likelihood &#43;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; (model-&gt;alpha - 1)*(dig[k] - digsum) &#43; lgamma(var_gamma[k])<br>
+&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; - (var_gamma[k] - 1)*(dig[k] - digsum);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp; for (n = 0; n &lt; doc-&gt;length; n&#43;&#43;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (phi[n][k] &gt; 0)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; likelihood &#43;= doc-&gt;counts[n]*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (phi[n][k]*((dig[k] - digsum) - log(phi[n][k])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &#43; model-&gt;log_prob_w[k][doc-&gt;words[n]]));<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
+&nbsp;&nbsp;&nbsp; }<br>
+&nbsp;&nbsp;&nbsp; return(likelihood);<br>
+}</td>
+</tr>
+</tbody>
+</table>
+<div><br>
+</div>
+</div>
+<div><br>
+</div>
+<div>lda_mle：针对每个文档执行do_e_step后，更新了ss,也就是计算模型所需要数据，topic-word对的次数</div>
+<div>
+<table border="1" cellpadding="2" cellspacing="0" width="100%">
+<tbody>
+<tr>
+<td valign="top">void lda_mle(lda_model* model, lda_suffstats* ss, int estimate_alpha)<br>
+{<br>
+&nbsp;&nbsp;&nbsp; int k; int w;<br>
+<br>
+&nbsp;&nbsp;&nbsp; for (k = 0; k &lt; model-&gt;num_topics; k&#43;&#43;)<br>
+&nbsp;&nbsp;&nbsp; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (w = 0; w &lt; model-&gt;num_terms; w&#43;&#43;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (ss-&gt;class_word[k][w] &gt; 0)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; model-&gt;log_prob_w[k][w] =<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; log(ss-&gt;class_word[k][w]) -<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; log(ss-&gt;class_total[k]);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; model-&gt;log_prob_w[k][w] = -100;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
+&nbsp;&nbsp;&nbsp; }<br>
+&nbsp;&nbsp;&nbsp; if (estimate_alpha == 1)<br>
+&nbsp;&nbsp;&nbsp; {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; model-&gt;alpha = opt_alpha(ss-&gt;alpha_suffstats,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ss-&gt;num_docs,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; model-&gt;num_topics);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; printf(&quot;new alpha = %5.5f\n&quot;, model-&gt;alpha);<br>
+&nbsp;&nbsp;&nbsp; }<br>
+}</td>
+</tr>
+</tbody>
+</table>
+<div><br>
+</div>
+</div>
+<br>
+</div>
+</div>
+   
+
+</body>
+</html>

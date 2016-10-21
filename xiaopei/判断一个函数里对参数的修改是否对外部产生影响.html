@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>判断一个函数里对参数的修改是否对外部产生影响</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/1285460<p>
+<address>&nbsp;&nbsp;标签：
+              聊天
+            
+        
+        
+            2006-09-26 08:49
+            750人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+<p>&nbsp;对于普通的swap(int a,int b)肯定不会对外界产生影响的</p>
+<p>对于传引用swap(int &amp;a,int &amp;b)对a,b的修改肯定会对外界产生影响</p>
+<p>现在主要说一下参数为指针 swap(int *a, int *b)或者更复杂的void func(int ***a,int ***b):</p>
+<p>判断的依据就是如果a为左值的情况下，如果前面有 * ,则修改外界产生影响，否则没有</p>
+<p>*a=5;有</p>
+<p>a=0x12345678；没有</p>
+<p>和一个同学聊天时谈到的，感觉挺有用的~</p>   
+
+</body>
+</html>

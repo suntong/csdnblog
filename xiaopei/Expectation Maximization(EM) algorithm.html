@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>Expectation Maximization(EM) algorithm</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/5851678<p>
+<address>&nbsp;&nbsp;标签：
+              algorithmoutput算法inputlayer框架
+            
+        
+        
+            2010-08-31 06:53
+            1218人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+<p>ML可以进行参数估计L(a) = Pr(X|a)，则a = argmax L(a) = argmaxPr(X|a)</p>  <p>求解时，如果 X与 参数(model)关系 比较简单，比如X直接由 高斯分布， bonuli 分布等产生，这种情况下，给定 model 以及相应的观察数据，来估计 model 的参数 a 时，比较简单，直接可以计算 P(X|a) ，最大化后求出 a 值。</p>  <p>但是如果input和Output之间没有必然的联系，也就是说无法直接计算p(X|a)时，就需要EM算法，EM是用来计算ML的一种算法框架。</p>  <p>EM算法相当于在input 和output之间增加了一个中间层Z(latent layer)，明确Pr(X,Z|a)，X, Z的联合概率以及 posterior distribution P(Z|X,a)，p(z|X,a)可以用贝叶斯概率计算出来。</p>  <p>基本推导过程如下，详细了解请看:The Expectation Maximization Algorithm A short tutorial</p>  <p><a href="http://hi.csdn.net/attachment/201008/30/0_1283208748x33Z.gif"><img title="9fba0de5-ae4d-4073-b18e-6a6b0c24c2ee" style="border-right: 0px; border-top: 0px; display: inline; border-left: 0px; border-bottom: 0px" height="34" alt="9fba0de5-ae4d-4073-b18e-6a6b0c24c2ee" src="http://hi.csdn.net/attachment/201008/30/0_12832087486XDi.gif" width="163" border="0" /></a></p>  <p><a href="http://hi.csdn.net/attachment/201008/30/0_128320874844z8.gif"><img title="e9179568-1619-4be1-8e95-f0e944370681" style="border-right: 0px; border-top: 0px; display: inline; border-left: 0px; border-bottom: 0px" height="21" alt="e9179568-1619-4be1-8e95-f0e944370681" src="http://hi.csdn.net/attachment/201008/30/0_128320874831dM.gif" width="244" border="0" /></a></p>  <p><a href="http://hi.csdn.net/attachment/201008/30/0_1283208749q0Y7.gif"><img title="80ccb6fb-c6df-4bd1-8f80-af7c97cc0811" style="border-right: 0px; border-top: 0px; display: inline; border-left: 0px; border-bottom: 0px" height="52" alt="80ccb6fb-c6df-4bd1-8f80-af7c97cc0811" src="http://hi.csdn.net/attachment/201008/30/0_1283208749cuZ0.gif" width="244" border="0" /></a></p>  <p><a href="http://hi.csdn.net/attachment/201008/30/0_1283208749X52Z.gif"><img title="be91e038-d296-4e89-942d-0d3dd618d987" style="border-right: 0px; border-top: 0px; display: inline; border-left: 0px; border-bottom: 0px" height="144" alt="be91e038-d296-4e89-942d-0d3dd618d987" src="http://hi.csdn.net/attachment/201008/30/0_128320874976hC.gif" width="244" border="0" /></a></p>  <p><a href="http://hi.csdn.net/attachment/201008/30/0_1283208750m19b.gif"><img title="07a57889-31d2-4716-9d79-25d09ae57b78" style="border-right: 0px; border-top: 0px; display: inline; border-left: 0px; border-bottom: 0px" height="37" alt="07a57889-31d2-4716-9d79-25d09ae57b78" src="http://hi.csdn.net/attachment/201008/30/0_1283208750a68d.gif" width="230" border="0" /></a></p>  <p><a href="http://hi.csdn.net/attachment/201008/30/0_1283208750d7FH.gif"><img title="2f08c67c-7400-461a-a309-2375c3acc8b3" style="border-right: 0px; border-top: 0px; display: inline; border-left: 0px; border-bottom: 0px" height="110" alt="2f08c67c-7400-461a-a309-2375c3acc8b3" src="http://hi.csdn.net/attachment/201008/30/0_1283208750j4j9.gif" width="244" border="0" /></a></p>  <p><a href="http://hi.csdn.net/attachment/201008/30/0_1283208750sa7j.gif"><img title="d03abb90-8e05-4b06-a53d-cefb93541b32" style="border-right: 0px; border-top: 0px; display: inline; border-left: 0px; border-bottom: 0px" height="150" alt="d03abb90-8e05-4b06-a53d-cefb93541b32" src="http://hi.csdn.net/attachment/201008/30/0_1283208751SbQb.gif" width="244" border="0" /></a></p>   
+
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>[topCoder-每日一二题]--[5]</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/1376160<p>
+<address>&nbsp;&nbsp;标签：
+              stringiostreampairalgorithmvectorstruct
+            
+        
+        
+            2006-11-09 20:50
+            988人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+<p>比较有意思的一个题目</p>
+<p>问题：车上有2列椅子，同一列中相邻椅子的距离为1，两列之间的距离为2，椅子上有一些乘客，现在上来上个人，如何使他们之间的距离和最短？</p>
+<p>解决：如果两列得某一列中有连续3个空位，则是最短距离为4。否则，按照2为坐标把空位存储到vector&lt;pair&gt;中，(x,y) <strong>第一列为（0，i）,第二列为(2,i)，然后按照y排序，如果y相同，按照x排序。这样对排序好的数组依次取3个计算距离，取最小值。</strong></p>
+<p>程序：</p>
+<p>#include &lt;vector&gt;<br />#include &lt;map&gt;<br />#include &lt;algorithm&gt;<br />#include &lt;string&gt;<br />#include &lt;complex&gt;<br />#include &lt;iostream&gt;<br />using namespace std;<br />struct cmp<br />{<br />&nbsp;bool operator()(pair&lt;int,int&gt;p1,pair&lt;int,int&gt;p2)<br />&nbsp;{<br />&nbsp;&nbsp;return p1.second==p2.second?(p1.first&lt;p2.first):p1.second&lt;p2.second;<br />&nbsp;}<br />};</p>
+<p>class BusSeating<br />{<br />&nbsp;private:<br />&nbsp;&nbsp;double deal(pair&lt;int,int&gt;p1,pair&lt;int,int&gt;p2,pair&lt;int,int&gt;p3)<br />&nbsp;&nbsp;{<br />&nbsp;&nbsp;&nbsp;double d1 = sqrt((double)(p1.first-p2.first)*(p1.first-p2.first)+(p1.second-p2.second)*(p1.second-p2.second));<br />&nbsp;&nbsp;&nbsp;double d2 = sqrt((double)(p1.first-p3.first)*(p1.first-p3.first)+(p1.second-p3.second)*(p1.second-p3.second));<br />&nbsp;&nbsp;&nbsp;double d3 = sqrt((double)(p3.first-p2.first)*(p3.first-p2.first)+(p3.second-p2.second)*(p3.second-p2.second));<br />&nbsp;&nbsp;&nbsp;return d1+d2+d3;<br />&nbsp;&nbsp;}<br />&nbsp;public:<br />&nbsp;double getArrangement(string l, string r)<br />&nbsp;{<br />&nbsp;&nbsp;string s = &quot;---&quot;;<br />&nbsp;&nbsp;if(l.find(s)!=string::npos||r.find(s)!=string::npos)<br />&nbsp;&nbsp;&nbsp;return 4.0;<br />&nbsp;&nbsp;vector&lt;pair&lt;int,int&gt; &gt;px;<br />&nbsp;&nbsp;int i = 0;<br />&nbsp;&nbsp;while((i=l.find('-',i))!=string::npos)<br />&nbsp;&nbsp;&nbsp;px.push_back(make_pair(0,i++));<br />&nbsp;&nbsp;i =0;<br />&nbsp;&nbsp;while((i=r.find('-',i))!=string::npos)<br />&nbsp;&nbsp;&nbsp;px.push_back(make_pair(2,i++));<br />&nbsp;&nbsp;sort(px.begin(),px.end(),cmp());<br />&nbsp;&nbsp;double min = 100000;<br />&nbsp;&nbsp;for(int i = 0; i&lt; px.size()-2;i++)<br />&nbsp;&nbsp;{<br />&nbsp;&nbsp;&nbsp;double tmp = deal(px[i],px[i+1],px[i+2]);<br />&nbsp;&nbsp;&nbsp;cout&lt;&lt;tmp&lt;&lt;endl;<br />&nbsp;&nbsp;&nbsp;if(min &gt; tmp+1e-9)<br />&nbsp;&nbsp;&nbsp;&nbsp;min = tmp;<br />&nbsp;&nbsp;}<br />&nbsp;&nbsp;return min;<br />&nbsp;&nbsp;<br />&nbsp;}<br />};</p>
+<p>&nbsp;</p>   
+
+</body>
+</html>

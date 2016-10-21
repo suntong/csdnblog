@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>看C陷阱与缺陷的一点收获</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/2602637<p>
+<address>&nbsp;&nbsp;标签：
+              cfloatfilefp
+            
+        
+        
+            2008-07-01 16:33
+            501人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+&nbsp;
+<div style="MARGIN-LEFT: 18pt; TEXT-INDENT: -18pt"><span>1.<span style="FONT: 7pt 'Times New Roman'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span>贪心法：每一个符号应包含尽可能多的字符。所以a+++b就不难理解了。</div>
+<div style="MARGIN-LEFT: 18pt; TEXT-INDENT: -18pt"><span>2.<span style="FONT: 7pt 'Times New Roman'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span>(*(void(*)())0)()的理解&nbsp;typedef void (*funcptr)(); (*(funcptr)0)()</div>
+<div style="MARGIN-LEFT: 18pt; TEXT-INDENT: -18pt"><span>3.<span style="FONT: 7pt 'Times New Roman'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span>单目运算符---算术运算符---移位运算符---关系运算符---逻辑运算符</div>
+<div style="MARGIN-LEFT: 18pt; TEXT-INDENT: -18pt"><span>4.<span style="FONT: 7pt 'Times New Roman'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span>只有&amp;&amp; ||&nbsp;?: ,保证最左到右的求值顺序。而y[i]=x[i++]不能保证先取y+i的地址</div>
+<div style="MARGIN-LEFT: 18pt; TEXT-INDENT: -18pt"><span>5.<span style="FONT: 7pt 'Times New Roman'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span>两个有符号整数相加，溢出 a+b &lt; 0，不正确，可以将a b都转化成无符号数进行判断。</div>
+<div style="MARGIN-LEFT: 18pt; TEXT-INDENT: -18pt"><span>6.<span style="FONT: 7pt 'Times New Roman'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span>如果一个函数在声明或者定义前被调用，默认其返回值为整型</div>
+<div style="MARGIN-LEFT: 18pt; TEXT-INDENT: -18pt"><span>7.<span style="FONT: 7pt 'Times New Roman'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span>如果一个函数没有float short char 类型的参数，在函数<span style="COLOR: red">声明中完全可以省略参数类型的说明，函数定义中则需要有。</span></div>
+<div style="MARGIN-LEFT: 18pt; TEXT-INDENT: -18pt"><span>8.<span style="FONT: 7pt 'Times New Roman'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span>一个输入操作不能紧跟一个输出操作（对同一文件），反之亦然。如需要，在中间添加fseek函数。 Fseek(fp,0,pos)，虽然什么都没做，但是保证正常执行。</div>
+<div style="MARGIN-LEFT: 18pt; TEXT-INDENT: -18pt"><span>9.<span style="FONT: 7pt 'Times New Roman'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span>setbuf(stdout,buff)将stdout先写入buff，等写满或者调用fflush即可，注意：缓冲区释放</div>
+<div style="MARGIN-LEFT: 18pt; TEXT-INDENT: -18pt"><span>10.<span style="FONT: 7pt 'Times New Roman'">&nbsp;&nbsp; </span></span>#define error()<span>&nbsp;&nbsp; cout&lt;&lt;__FILE__&lt;&lt;endl&lt;&lt;__LINE__&lt;&lt;endl;</span></div>
+<div style="MARGIN-LEFT: 18pt; TEXT-INDENT: -18pt"><span>11.<span style="FONT: 7pt 'Times New Roman'">&nbsp;&nbsp; </span></span>无符号右移，高位用0补上；有符号，不确定。移位的范围为0~位数-1；用移位替代除法</div>
+<div style="MARGIN-LEFT: 18pt; TEXT-INDENT: -18pt"><span>12.<span style="FONT: 7pt 'Times New Roman'">&nbsp;&nbsp; </span></span>n=-n 注意，如果n为负数，则有可能出现问题。-2^N ~ 2^N -1</div>   
+
+</body>
+</html>

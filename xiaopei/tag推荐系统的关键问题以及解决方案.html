@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>tag推荐系统的关键问题以及解决方案</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/7695859<p>
+<address>&nbsp;&nbsp;标签：
+              usertoken产品queryurlsystem
+            
+        
+        
+            2012-06-27 13:26
+            4754人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+
+<span class="updated" title="2012-06-27T05:28:54&#43;00:00"></span>
+<div class="entry-container fix">
+<div class="entry fix">
+<h6>&nbsp;<br>
+from: <a href="http://www.hxxiaopei.com/?p=141">http://www.hxxiaopei.com/?p=141</a></h6>
+<h6>最近在做推荐产品，读了一些论文，客观的说，扯淡的居多，基本的思路也差不多，结合工作的情况，谈一下tag推荐的产品形态、主要问题以及如何推荐</h6>
+<h2>产品形态以及主要问题</h2>
+<p>tag 的推荐系统，顾名思义，利用用户或者item的 tag信息进行推荐，涉及到两个产品形态：</p>
+<p>1.tag-based recommend，基于tag信息推荐item给用户</p>
+<p>2.tag recommend，给用户推荐tag</p>
+<p>无论1,还是2，都面临一个问题，tag从哪里来？这个是tag推荐系统最为关键的事情。通常来讲，有4个：</p>
+<p>1.专家标注，貌&#20284;jnni是这样做的</p>
+<p>2.UGC，由用户产生，douban等很多都是这样搞得</p>
+<p>3.系统产生，利用用户/item数据</p>
+<p>4.人工和系统相结合</p>
+<p>解决了tag产生的问题，构建tag体系后，我们只需要抽取相关的feature，就可以完成item推荐或者tag推荐。</p>
+<h2>tag产生</h2>
+<p>工程上分析一下如何生成tag：</p>
+<h6>1.专家标注</h6>
+<p>目前大多数公司不现实，尤其是startup时，不可能有这么大的投入。</p>
+<p>在垂直领域，这个问题可以简化，成熟的相关网站抓取，比如3C类，可以去京东，中关村在线等，结构化数据，效果不错。</p>
+<p>覆盖率可能不够，但是作为startup公司或者要求不高时，应该够用，如果做深，是一个无底洞，taobao N多人N年搞产品库，投入很大。</p>
+<p>所以有朋友希望兼职做做产品库挖掘，尤其说类&#20284;淘宝那种，直接拒绝。</p>
+<h6>2.UGC</h6>
+<p>tag的获取不是问题，产生的tag有很大的随意性，问题在于如何处理这些tag，主要问题：</p>
+<p>1.书写不规范，最重要的问题，比如 美女，大美女，recomend system recomendation system, RS 等等，需要做归一化</p>
+<p>2.同义关系</p>
+<p>目前UGC 产生标签，是最主要的形式，不过产品前期比较多，稳定后用户更多的会采用推荐的tag</p>
+<h6>3.系统产生</h6>
+<p>用系统产生tag，基于user或者item信息，最简单的方式，将用户访问item的title取出来，处理后生成tag给用户，比如用户浏览”美女范冰冰“，可以将”美女“”范冰冰“作为该item的tag。</p>
+<p>这种方式在系统初始化时，非常有效，无UGC数据，如果给用户提供tag，提高用户体验以及规范用户行为</p>
+<p>目前的工作主要是针对用户的浏览的web，提供该web的tag信息，供用户选择。问题是web的title包含的信息太好，尤其是非文本类web页面。主要处理的方式，对title分词后</p>
+<p>1.过滤掉停用词，比如数字，的，一个 等，极端一点过滤掉所有的单字，但是会将其中的名词滤掉</p>
+<p>2.只考虑名词，动名词，地名，人名等实体词，这些词对title的信息描述比较好，类&#20284; 购买，采购等动词没有意义，这些信息可以在分词是获取到词性信息</p>
+<p>3.计算每个token的idf&#20540;，对于title来讲，token的 tf&#20540;一般都是1，所以只需要idf，出现在title的次数越多，idf越小，生僻token的idf&#20540;偏大</p>
+<p>目前没有办法很好的计算token的全局或者在title中的分数，只能用idf来描述，大多数情况下还行，但是不够准确。</p>
+<p>将用户访问过过的所有item title获取到，提取出来的tag可以作为用户的profile&nbsp;</p>
+<h6>4.人工和系统结合</h6>
+<p>这个依赖稍微多一些，1，通过专家或者其他方式获取一批种子数据，比如某些item的tag，然后通过item间的相&#20284;性或者其他方式将item关联起来，将tag扩散出去，同样可以生成item的tag列表，当然会有一个权重信息，将低权重滤掉即可。UR</p>
+<p>产生种子后，搜索数据中在同query下,url的内容相&#20284;性也很大 ，可以获取query-&gt;clicked url list以及 clicked url-&gt;qurey list，目标是同时对query以及url产生tag，初始化<span class="MathJax_Preview"><img class="tex" alt="P(Tag_{q}) = \alpha * sum_{u:(q,u)}{w_{qu}}P(Tag_{u}=tag)" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_3a5f8b2204c0b2798b3c78a3e9f04dc1.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+ ，其中<span class="MathJax_Preview"><img class="tex" alt="w_{qu}" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_cdd069b0b2fdb6f65885cfd226196a5a.gif" style="border-bottom:medium none; border-left:medium none; padding-bottom:1px; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+ 表示通过改query点击url的次数除以通过query点击所有url的总次数。</p>
+<p>同时 <span class="MathJax_Preview"><img class="tex" alt="P(Tag_{u}) = \alpha * sum_{q:(q,u)}{w_{qu}}P(Tag_{q}=tag)" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_bb6f8d39c24198cb3ff966c4bc6166a6.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+ ，<span class="MathJax_Preview"><img class="tex" alt="w_{uq}" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_e742c8cf6a43f32a5a88c0ee0eb8a86e.gif" style="border-bottom:medium none; border-left:medium none; padding-bottom:1px; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+ 表示通过通过q访问u的次数除以通过所有qeury访问u的总次数，不停地迭代，最后将seed中的tag扩散出去，针对每个url/query,去概率最大的几个tag。</p>
+<h2>tag推荐</h2>
+<p>当有了tag数据后，就是利用tag完成那两个产品推荐,首先说明一下可能的feature</p>
+<p style="text-align:left">1.用户user 使用tag的次数<span class="MathJax_Preview"><img class="tex" alt="N_{u,t}" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_001797f9077825270395789bb398d61a.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+</p>
+<p style="text-align:left">2.item被打上tag的次数<span class="MathJax_Preview"><img class="tex" alt="N_{i,t}" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_e7db5bd2ad584b64ccf357f51ce788e8.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+</p>
+<p style="text-align:left">3,tag被多少个user使用过<span class="MathJax_Preview"><img class="tex" alt="N_{t}^{u}" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_d196189682ba153dc2c70544e58ed86b.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+</p>
+<p style="text-align:left">4.tag被用在多少个item上面<span class="MathJax_Preview"><img class="tex" alt="N_{i}^{t}" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_161635390f272cfbcac49b529c00565e.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+</p>
+<p style="text-align:left">5.p(tag|user)</p>
+<p style="text-align:left">6.p(item|tag)</p>
+<p style="text-align:left">7.p(tag|item)</p>
+<p style="text-align:left">8.p(user|tag)</p>
+<p>利用这些数据以及常用的理论，进行推荐：</p>
+<h6>1.基于tag给用户推荐item</h6>
+<p>计算user对item的喜好程度，最直接的做法 <span class="MathJax_Preview"><img class="tex" alt="sum_{t}{N_{u,t}N_{t,i}}" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_6bbac174267d72aac65bd7a2b384b7f6.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+ 用户使用tag越多，tag用户item的越多，那么用户可能越喜欢。</p>
+<p>很容易想到万能的tf-idf，如果这个tag被其他用户用过的越少，说明这个tag也能代表user的兴趣，同样如果item被使用的其他的tag越少，tag越能刻画item，转化为：</p>
+<p><span class="MathJax_Preview"><img class="tex" alt="sum_{t}{N_{u,t}N_{t,i}}/(\alpha &#43; N_{t}^{u})(\alpha &#43; N_{i}^{t})" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_028d51b61519ee244cbaf408abd1f374.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+</p>
+<p>也可以利用　概率模型直接算，p(u,i) = <span class="MathJax_Preview"><img class="tex" alt="sum_{t}p(t|u)p(i|t)" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_e654226a96f08ce8ffac861950f68048.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+ 。</p>
+<p>在实际使用时，无法两类，基于用户还是基于item，比如item-based，用户最近访问的item，选取item最可能的属于的tag，p(tag|item)分&#20540;较大的，然后将这个tag热门的内容推荐出来，p(item|tag)比较大的item,准确率可能比较低，但是复杂度低。</p>
+<h5>2.tag推荐</h5>
+<p>两个思路，推荐用户常用的tag以及item上常用的tag，也就是<span class="MathJax_Preview"><img class="tex" alt="N_{u,t}" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_001797f9077825270395789bb398d61a.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+<span class="MathJax_Preview"><img class="tex" alt="N_{i,t}" src="http://www.hxxiaopei.com/blog/wp-content/plugins/latex/cache/tex_e7db5bd2ad584b64ccf357f51ce788e8.gif" style="border-bottom:medium none; border-left:medium none; vertical-align:middle; border-top:medium none; border-right:medium none"></span>
+ 大的tag列表。</p>
+<p>&lt;推荐系统实践&gt;做过对比试验，两个都提供，用户使用的概率最大，所以类&#20284;douban等都会将内容提供出来</p>
+<h2>一些思考：</h2>
+<p>tag是连接user 和item的手段，更清楚的表达的用户的意图，比较像topic model，在user-item中间引入一层具备 语义信息的概念。</p>
+</div>
+</div>
+   
+
+</body>
+</html>

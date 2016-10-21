@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>Maximum likelihood estimate</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/5834637<p>
+<address>&nbsp;&nbsp;标签：
+              classificationc
+            
+        
+        
+            2010-08-24 14:30
+            919人阅读
+             评论(0)
+             收藏
+              举报</address><p>
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><span>已知样本</span><span lang="EN-US">Sample</span><span>和假定模型</span><span lang="EN-US">Model</span><span>，模型中有待定参数，</span><span lang="EN-US">P(Sample|Model, &alpha;)</span><span>。</span></p>
+<p><span>最大似然估计：在给定的</span><span lang="EN-US">model</span><span>下，找到</span><span lang="EN-US">&alpha;</span><span>，保证</span><span lang="EN-US">P(Sample|Model)</span><span>的概率最大，也就是最有可能是该</span><span lang="EN-US">Model</span><span>产生的。</span></p>
+<p><span lang="EN-US">case1:</span></p>
+<p><span lang="EN-US">n</span><span>次独立实验，事件</span><span lang="EN-US">A</span><span>发生了</span><span lang="EN-US">k</span><span>次，则事件</span><span lang="EN-US">A</span><span>发生的概率</span><span lang="EN-US">p</span><span>是多少。</span></p>
+<p><span lang="EN-US">Model=</span><span>柏松分布，则服从泊松分布的情况下，事件</span><span lang="EN-US">A</span><span>发生</span><span lang="EN-US">k</span><span>次的概率，为</span><span lang="EN-US">P(S|Model,p)= (n,k)*p^k * (1-p)^(n-k)</span></p>
+<p><span lang="EN-US">max-log-likelihood =
+argmax(log ((n,k)*p^k * (1-p)^(n-k)))</span><span>，导数</span><span lang="EN-US">=0</span><span>，可求得</span><span lang="EN-US">p = k/n</span></p>
+<p><span lang="EN-US">Case2:</span></p>
+<p><span lang="EN-US">N</span><span>个样本数据，服从高斯分布，其中均值和方差未知。</span></p>
+<p><span lang="EN-US">P(Sample|Model, u delta)
+= Sum(log(Model(u,delta, s))</span><span>，</span><span lang="EN-US"> s</span><span>属于</span><span lang="EN-US">S</span></p>
+<p><span lang="EN-US">max-log-likelihood =
+argmaxP(Sample|Model, u delta)</span></p>
+<p><span>最后分别按照对均值和方差的导数</span><span lang="EN-US">=0</span><span>，求解。</span></p>
+<p><span lang="EN-US">Case3:</span></p>
+<p><span>分类</span><span lang="EN-US"> Observation </span><span>，</span><span lang="EN-US">Classification</span><span>，则每个</span><span lang="EN-US">O</span><span>对应类别</span><span lang="EN-US">c</span></p>
+<p><span>则</span><span lang="EN-US">Model=MaxEnt</span><span>，</span></p>
+<p><span>在</span><span lang="EN-US">mle = argmax P(O,C|MaxEnt) </span><span>其中</span><span lang="EN-US">maxEnt</span><span>中</span><span lang="EN-US">p(c|o) =
+MaxEnt(o,c,w)</span></p>
+<p><span>则</span><span lang="EN-US">mle = argmax sum(Log(p(c|o, w)))&nbsp; </span><span>参数为</span><span lang="EN-US">w</span></p>
+<p><span>最后采用牛顿迭代或者</span><span lang="EN-US">l-bfgs</span><span>求出</span><span lang="EN-US">w</span></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>   
+
+</body>
+</html>

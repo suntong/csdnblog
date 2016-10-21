@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body {background-color: LightCyan;}
+h1   {color: blue;}
+</style>
+</head>
+<body>
+<h1>使用ruby写了一个根据ftp服务器列表自动遍历所有服务器查找对应的东东</h1><p>
+From http://blog.csdn.net/hxxiaopei/article/details/1553067<p>
+<address>&nbsp;&nbsp;标签：
+              ftp服务器ruby服务器userlistfile
+            
+        
+        
+            2007-04-05 16:08
+            1572人阅读
+             评论(1)
+             收藏
+              举报</address><p>
+
+<span class="postbody">前在ftp上下载一个东西，需要查找很多ftp-server，累～今日学习ruby,使用ruby写了 一个对应给定的ftp_list和需要查找的东东，比如lost 越狱等，遍历ftp_list里面的所有服务器，如果找到，打印服务器名和对应的路径。不过感觉效率不是很好，高手完善一下 <br /> require &quot;net/ftp&quot; <br /> class FTPDownload <br /> 	def initialize(ip_address,user,pw,port=21) <br /> 		puts ip_address.class,user,pw <br /> 		@ip_address=ip_address <br /> 		@user=user <br /> 		@pw=pw <br /> 		@port=port <br /> 	end <br /> 	def login? <br /> 		begin <br /> 			@ftp=Net::FTP.new(@ip_address) <br /> 			@ftp.login(@user,@pw) <br /> 			return true <br /> 		rescue <br /> 			return false <br /> 		end <br /> 	end <br /> 	def find_wanted(re) <br /> 	father_dir=&quot;&quot; <br /> 	array_list=[] <br /> 	begin <br /> 		array = @ftp.list <br /> 		array.each do |file| <br /> 			if re.match(file) != nil  <br /> 				puts @ftp.pwd			 <br /> 				puts &quot;match&quot; <br /> 				return true <br />  <br /> 			else <br /> 				if file[0]==100 #目录 <br /> 					str=file.split(//s*/s/) <br /> 					if str[str.length-1] !=&quot;.&quot; &amp;&amp; str[str.length-1]!=&quot;..&quot; <br /> 						new_dir = father_dir + &quot;/&quot; + str[str.length-1] <br /> 						array_list &lt;&lt; new_dir <br /> 					end <br /> 				end <br /> 			end <br />  <br />  <br /> 		end <br /> 		next_dir=array_list.shift <br /> 		father_dir=next_dir <br /> 		begin <br /> 			@ftp.chdir(next_dir) <br /> 			rescue <br /> 				&quot;can not change directory&quot; <br /> 		end <br /> 	end until array_list.empty? <br /> 	end <br /> 	def close <br /> 		@ftp.close <br /> 	end <br /> end <br /> ADD=[] <br /> IO.foreach(&quot;ftpAddress&quot;) do|address| <br /> 	addr=address.split(&quot;/s&quot;) <br /> 	ADD &lt;&lt; addr <br /> end <br /> re = Regexp.new(&quot;nfo&quot;)#需要查找的关键字 <br /> ADD.each do |addr| <br /> 	printf addr[0], addr[1],addr[2] <br /> 	ftp=FTPDownload.new(addr[0],addr[1],addr[2]) <br /> 	if <a target="_blank" href="http://ftp.login/?">ftp.login?</a> <br /> 		ftp.find_wanted(re) <br /> 		ftp.close <br /> 	else <br /> 		puts &quot;can not login&quot; <br /> 	end <br /> end</span>   
+
+</body>
+</html>
